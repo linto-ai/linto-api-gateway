@@ -2,7 +2,7 @@
 SAAS_API_GATEWAY_HTTP_PORT=8080
 SAAS_API_BASE_PATH=/api
 
-COMPONENTS=WebServer,DockerWatcher
+COMPONENTS=WebServer,ServiceWatcher
 
 # Mongo
 DB_DRIVER=mongo

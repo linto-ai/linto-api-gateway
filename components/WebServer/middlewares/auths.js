@@ -1,14 +1,14 @@
-const debug = require('debug')('saas-api-gateway:webserver:middlewares:logs')
+const debug = require('debug')('saas-api-gateway:webserver:middlewares:auth')
 
 const {
-  LogsError,
-} = require(`${process.cwd()}/components/WebServer/error/exception/logs`)
+  AuthsError,
+} = require(`${process.cwd()}/components/WebServer/error/exception/auths`)
 
 module.exports = async (req, res, next) => {
   try {
     //req.payload.service contains docker label and other information
-    debug('Logs middlewares is enable')
-
+    debug('Auth middlewares is enable')
+    debug(req.payload.service)
     if (typeof next === 'function') next()
     else return
   } catch (error) {
