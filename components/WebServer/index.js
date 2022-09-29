@@ -12,6 +12,7 @@ class WebServer extends Component {
     constructor(app) {
         super(app)
         this.app = express()
+        this.router = express.Router()
         this.id = this.constructor.name
 
         this.app.use(function (req, res, next) {
@@ -24,9 +25,9 @@ class WebServer extends Component {
         this.app.use(bodyParser.json())
         this.app.use(fileUpload())
 
-        require('./routes/router.js')(this)
+        // require('./routes/router.js')(this)  //TODO: Gateway do'nt have any API (only service discovery)
 
-        this.app.set('trust proxy', true);
+        this.app.set('trust proxy', true)
 
         WebServerErrorHandler.init(this)
 
