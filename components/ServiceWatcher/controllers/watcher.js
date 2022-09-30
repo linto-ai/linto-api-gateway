@@ -12,16 +12,14 @@ module.exports = async function () {
   streamEvent.on('data', async buffer => {
     try {
       const { Type, Action, Actor } = JSON.parse(buffer.toString())
-      debug(`Docker event : ${Type}-${Action}`)
 
       switch (Type) {
         case 'service':
+          debug(`Docker event : ${Type}-${Action}`)
           dockerService.call(this, Type, Action, Actor)
           break;
-        // case 'container':
-        //   break;
         default:
-          debug(`Unknown docker type ${Type}`)
+          debug(`Unmanaged docker type ${Type}-${Action}`)
       }
 
     } catch (err) {
@@ -51,7 +49,7 @@ async function dockerService(Type, Action, Actor) {
 
   if (Action === 'remove') {
     const serviceMetadata = this.services[serviceName] // Get service metadata from component
-    this.emit(`${Type}-${Action}`, serviceMetadata) // service-remove
+    if (serviceMetadata) this.emit(`${Type}-${Action}`, serviceMetadata) // service-remove
 
   } else {
     const serviceInspect = await docker.getService(id).inspect()
@@ -63,10 +61,10 @@ async function dockerService(Type, Action, Actor) {
         this.emit(`${Type}-${Action}`, serviceMetadata) // service-create
       } else if (Action === 'update') {
         if (serviceInspect.PreviousSpec) { // Verify if the service was previously running
-          if (true || !compareSpec(serviceInspect)) { 
+          if (!compareSpec(serviceInspect)) {
             this.emit(`${Type}-${Action}`, serviceMetadata) // service-update
           } else {
-            debug('No change detected in the service update')
+            debug('No change detected for service update')
           }
         }
       }

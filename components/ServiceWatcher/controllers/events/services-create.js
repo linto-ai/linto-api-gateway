@@ -4,18 +4,16 @@ const { createRoute } = require(`${process.cwd()}/components/WebServer/controlle
 
 module.exports = async function () {
   let webServer = this.app.components.WebServer
+  let services = this.services
 
-  this.on('service-create', (attributes) => {
-    createRoute(webServer, attributes)
+  this.on('service-create', async (attributes) => {
+    try {
 
-    registerService.call(this, attributes)
+      await createRoute(webServer, attributes, services)
+      this.app.components.ServiceWatcher.services[attributes.serviceName] = { ...attributes }
+
+    } catch (err) {
+      console.error(err)
+    }
   })
-}
-
-
-function registerService(attributes) {
-  this.app.components.ServiceWatcher.services[attributes.serviceName] =
-  {
-    ...attributes
-  }
 }

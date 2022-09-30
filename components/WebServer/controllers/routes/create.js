@@ -1,52 +1,52 @@
-const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:events:service-create')
-const { createProxyMiddleware, responseInterceptor, fixRequestBody } = require('http-proxy-middleware');
+const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:create')
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const webserver_middlewares = require(`${process.cwd()}/components/WebServer/middlewares`)
-const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
+const { ServiceSettingsError, ServiceApiEndpointError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
 
-async function create (webServer, attributes) {
-  const paths = attributes?.containerLabel['linto.api.gateway.service.endpoint']
-  if (!paths) throw new ServiceSettingsError() 
+async function create(webServer, attributes, services) {
+  try {
+    const paths = attributes?.containerLabel['linto.api.gateway.service.endpoint']
 
-  // let serviceHost = 'http://' + attributes?.serviceName.replace(attributes?.stackLabel['com.docker.stack.namespace'] + '_', '')
-  let serviceHost = 'http://dev.linto.local' //TODO: User serviceName as host
-  if (attributes?.containerLabel['linto.api.gateway.service.port'])
-    serviceHost += `:${attributes?.containerLabel['linto.api.gateway.service.port']}`
+    if (!paths) throw new ServiceSettingsError()
+    if (!isPathAvailable(paths, services)) throw new ServiceApiEndpointError(paths)
 
+    let serviceHost = 'http://' + attributes?.serviceName.replace(attributes?.stackLabel['com.docker.stack.namespace'] + '_', '')
 
-  const serviceMiddlewares = attributes?.containerLabel['linto.api.gateway.service.middlewares']
+    if (attributes?.containerLabel['linto.api.gateway.service.port'])
+      serviceHost += `:${attributes?.containerLabel['linto.api.gateway.service.port']}`
 
-  let middlewares = loadMiddleware(serviceMiddlewares)
+    const serviceMiddlewares = attributes?.containerLabel['linto.api.gateway.service.middlewares']
+    const middlewares = loadMiddleware(serviceMiddlewares)
 
+    paths.split(',').map(path => {
+      const stripPathPrefix = '^' + path
 
-  paths.split(',').map(path => {
-    const stripPathPrefix = '^' + path
-
-    const proxy = createProxyMiddleware({
-      target: serviceHost,
-      pathRewrite: {
-        [stripPathPrefix]: '/', // remove the uri endpoint from req
-      },
-      onProxyReq: async (proxyReq, req, res, next) => {
-        req.payload = {
-          service: {
-            attributes
+      const proxy = createProxyMiddleware({
+        target: serviceHost,
+        pathRewrite: {
+          [stripPathPrefix]: '/', // remove the uri endpoint from req
+        },
+        onProxyReq: async (proxyReq, req, res, next) => {
+          req.payload = {
+            service: {
+              attributes
+            }
           }
-        }
-        await middlewareExec(middlewares, req, res, next)
-      },
+          await middlewareExec(middlewares, req, res, next)
+        },
 
-      onProxyRes: (async (responseBuffer, proxyRes, req, res) => {
-        // debug('TODO: Request is complete, do stuff ?)
-      }),
+        onProxyRes: (async (responseBuffer, proxyRes, req, res) => {
+          // debug('TODO: Request is complete, do stuff ?)
+        }),
 
+      })
+
+      webServer.app.use(path, proxy)
     })
-
-    webServer.app.use(path, proxy)
-  })
-
-
-
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 function loadMiddleware(serviceMiddlewares) {
@@ -67,6 +67,23 @@ async function middlewareExec(middlewares, req, res, next) {
   middlewares.map(middleware => {
     middleware(req, res, next)
   })
+}
+
+function isPathAvailable(paths, services) {
+  let pathAvailable = true
+
+  if (Object.keys(services).length === 0) return pathAvailable
+
+  for (let serviceName in services) {
+    paths.split(',').map(path => {
+      services[serviceName].containerLabel['linto.api.gateway.service.endpoint'].split(',').map(servicePath => {
+        if (servicePath === path) {
+          pathAvailable = false
+        }
+      })
+    })
+  }
+  return pathAvailable
 }
 
 

@@ -2,18 +2,22 @@ const debug = require('debug')('saas-api-gateway:components:service-watcher:cont
 
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
 
+const { removeRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
+
+
 module.exports = async function () {
   let webServer = this.app.components.WebServer
 
-  this.on('service-remove', (attributes) => {
-    const path = attributes?.containerLabel['linto.api.gateway.service.endpoint']
+  this.on('service-remove', async (attributes) => {
+    try {
+      const path = attributes?.containerLabel['linto.api.gateway.service.endpoint']
+      if (!path) throw new ServiceSettingsError()
 
-    if (!path) throw new ServiceSettingsError()
+      await removeRoute(webServer, attributes)
+      delete this.app.components.ServiceWatcher.services[attributes.serviceName]
 
-    // webServer.router.stack = webServer.router.stack.filter(layer => {
-    //   debug(layer.regexp.toString().includes(path))
-    //   return !layer.regexp.toString().includes(path)
-    // })
-
+    } catch (err) {
+      console.error(err)
+    }
   })
 }

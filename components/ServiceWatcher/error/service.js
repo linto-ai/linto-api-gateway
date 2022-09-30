@@ -4,14 +4,13 @@
 
 const ExceptionType = 'service'
 
-class ServiceSettingsError extends Error {
-  constructor(message) {
+class ServiceApiEndpointError extends Error {
+  constructor(endpoint) {
     super()
-    this.name = 'ServiceSettingsError'
+    this.name = 'ServiceApiEndpointError'
     this.type = ExceptionType
     this.status = '400'
-    if (message) this.message = message
-    else this.message = 'Unable to setup service'
+    this.message = 'An endpoint is already used by an other service '+endpoint
   }
 }
 
@@ -28,6 +27,6 @@ class ServiceError extends Error {
 
 
 module.exports = {
-  ServiceSettingsError,
+  ServiceApiEndpointError,
   ServiceError
 }
