@@ -1,17 +1,19 @@
 const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:events:service-create')
 
-const { createRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
+const { availableRoute, createRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
 
 module.exports = async function () {
   let webServer = this.app.components.WebServer
-  let services = this.services
+  let servicesLoaded = this.servicesLoaded
 
-  this.on('service-create', async (attributes) => {
+  this.on('service-create', async (serviceConfig) => {
     try {
-
-      await createRoute(webServer, attributes, services)
-      this.app.components.ServiceWatcher.services[attributes.serviceName] = { ...attributes }
-
+      if (await availableRoute(serviceConfig, servicesLoaded)) {
+        await createRoute(webServer, serviceConfig)
+        this.app.components.ServiceWatcher.servicesLoaded[serviceConfig.name] = serviceConfig
+      } else {
+        debug('Requested endpoint is not available ' + serviceConfig.label.endpoints)
+      }
     } catch (err) {
       console.error(err)
     }

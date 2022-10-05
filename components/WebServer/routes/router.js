@@ -9,10 +9,10 @@ class Router {
     constructor(webServer) {
         const routes = require('./routes.js')(webServer)
         for (let level in routes) {
-            for (let path in routes[level]) {
+            for (let endpoint in routes[level]) {
                 let controller = []
 
-                const route = routes[level][path]
+                const route = routes[level][endpoint]
                 const method = route.method
 
                 // Load middlewares to use before api controller
@@ -28,10 +28,8 @@ class Router {
                 )
 
                 // Load middlewares to use after api controller
-
-
                 webServer.app[method](
-                    level + route.path,
+                    level + route.endpoint,
                     controller
                 )
             }

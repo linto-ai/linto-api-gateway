@@ -1,5 +1,5 @@
 /****************
-***** Logs ******
+***** Service ******
 *****************/
 
 const ExceptionType = 'service'
@@ -9,8 +9,18 @@ class ServiceApiEndpointError extends Error {
     super()
     this.name = 'ServiceApiEndpointError'
     this.type = ExceptionType
+    this.status = '406'
+    this.message = 'The requested endpoint is already used by an other service : '+endpoint
+  }
+}
+
+class ServiceSettingsError extends Error {
+  constructor() {
+    super()
+    this.name = 'ServiceSettingsError'
+    this.type = ExceptionType
     this.status = '400'
-    this.message = 'An endpoint is already used by an other service '+endpoint
+    this.message = 'Require settings are missing'
   }
 }
 
@@ -25,8 +35,8 @@ class ServiceError extends Error {
   }
 }
 
-
 module.exports = {
   ServiceApiEndpointError,
+  ServiceSettingsError,
   ServiceError
 }

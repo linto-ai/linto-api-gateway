@@ -4,6 +4,8 @@ const _ = require('lodash');
 const Docker = require('dockerode')
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
+const { Service } = require('./lib/service')
+
 module.exports = async function () {
   serviceDiscovery.call(this)
 
@@ -30,59 +32,49 @@ module.exports = async function () {
 
 async function serviceDiscovery() {
   const listService = await docker.listServices()
-  listService.map(async service => {
-    const serviceInspect = await docker.getService(service.ID).inspect()
+  listService.map(async serviceAlive => {
+    const serviceInspect = await docker.getService(serviceAlive.ID).inspect()
+    const service = new Service(serviceInspect?.Spec.Name, serviceInspect)
 
-    if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Labels['linto.api.gateway.service.enable'] === 'true') {
-      const serviceName = serviceInspect?.Spec.Name
-
-      const serviceMetadata = generateMetadata(serviceName, serviceInspect)
-      this.emit(`service-create`, serviceMetadata)
+    if (service.isEnable()) {
+      this.emit(`service-create`, service)
     }
   })
 }
 
-
 async function dockerService(Type, Action, Actor) {
-  const id = Actor?.ID
-  const serviceName = Actor?.Attributes?.name
+  try {
 
-  if (Action === 'remove') {
-    const serviceMetadata = this.services[serviceName] // Get service metadata from component
-    if (serviceMetadata) this.emit(`${Type}-${Action}`, serviceMetadata) // service-remove
+    const id = Actor?.ID
+    const serviceName = Actor?.Attributes?.name
+    let service = new Service(serviceName)
 
-  } else {
-    const serviceInspect = await docker.getService(id).inspect()
+    if (Action === 'remove') {
+      if (this.servicesLoaded[service.name]) this.emit(`${Type}-${Action}`, this.servicesLoaded[service.name]) // service-remove
 
-    if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Labels['linto.api.gateway.service.enable'] === 'true') {
-      const serviceMetadata = generateMetadata(serviceName, serviceInspect)
+    } else {
+      const serviceInspect = await docker.getService(id).inspect()
+      service.setServiceInspectMetadata(serviceInspect)
 
-      if (Action === 'create') {
-        this.emit(`${Type}-${Action}`, serviceMetadata) // service-create
-      } else if (Action === 'update') {
-        if (serviceInspect.PreviousSpec) { // Verify if the service was previously running
-          if (!compareSpec(serviceInspect)) {
-            this.emit(`${Type}-${Action}`, serviceMetadata) // service-update
+      if (service.isEnable()) {
+
+        if (Action === 'create') {
+          this.emit(`${Type}-${Action}`, service) // service-create
+        } else if (Action === 'update') {
+          if (serviceInspect.PreviousSpec && !compareDockerSpec(serviceInspect)) { // Verify if the service was previously running
+            this.emit(`${Type}-${Action}`, service) // service-update
           } else {
             debug('No change detected for service update')
           }
         }
       }
-
     }
+  } catch (err) {
+    console.error(err)
   }
 }
 
-
-function generateMetadata(serviceName, serviceInspect) {
-  return {
-    containerLabel: serviceInspect.Spec.TaskTemplate.ContainerSpec.Labels,
-    stackLabel: serviceInspect.Spec.Labels,
-    serviceName: serviceName
-  }
-}
-
-function compareSpec(serviceInspect) {
+function compareDockerSpec(serviceInspect) {
   const spec = serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Labels
   const previousSpec = serviceInspect?.PreviousSpec?.TaskTemplate?.ContainerSpec?.Labels
   return _.isEqual(spec, previousSpec)

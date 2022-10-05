@@ -6,7 +6,7 @@ class ServiceWatcher extends Component {
     constructor(app) {
         super(app)
         this.id = this.constructor.name
-        this.services = {}
+        this.servicesLoaded = {}
         this.app = app
         return this.init()
     }

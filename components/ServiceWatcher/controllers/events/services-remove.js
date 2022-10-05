@@ -8,13 +8,10 @@ const { removeRoute } = require(`${process.cwd()}/components/WebServer/controlle
 module.exports = async function () {
   let webServer = this.app.components.WebServer
 
-  this.on('service-remove', async (attributes) => {
+  this.on('service-remove', async (serviceConfig) => {
     try {
-      const path = attributes?.containerLabel['linto.api.gateway.service.endpoint']
-      if (!path) throw new ServiceSettingsError()
-
-      await removeRoute(webServer, attributes)
-      delete this.app.components.ServiceWatcher.services[attributes.serviceName]
+      await removeRoute(webServer, serviceConfig)
+      delete this.app.components.ServiceWatcher.servicesLoaded[serviceConfig.name]
 
     } catch (err) {
       console.error(err)

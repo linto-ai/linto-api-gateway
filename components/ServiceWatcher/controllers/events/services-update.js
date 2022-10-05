@@ -2,25 +2,24 @@ const debug = require('debug')('saas-api-gateway:components:service-watcher:cont
 
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
 
-const { createRoute, removeRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
+const { availableRoute, createRoute, removeRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
 
 
 module.exports = async function () {
   let webServer = this.app.components.WebServer
-  let services = this.services
+  let servicesLoaded = this.servicesLoaded
 
-  this.on('service-update', async (updateAttributes) => {
+  this.on('service-update', async (newServiceConfig) => {
     try {
-      const path = updateAttributes?.containerLabel['linto.api.gateway.service.endpoint']
-      if (!path) throw new ServiceSettingsError()
-      const previousAttributes = this.app.components.ServiceWatcher.services[updateAttributes.serviceName]
+      if (await availableRoute(newServiceConfig, servicesLoaded)) {
+        const previouServiceConfig = this.app.components.ServiceWatcher.servicesLoaded[newServiceConfig.name]
 
-      await removeRoute(webServer, previousAttributes)
-      delete this.app.components.ServiceWatcher.services[updateAttributes.serviceName]
+        await removeRoute(webServer, previouServiceConfig)
+        delete this.app.components.ServiceWatcher.servicesLoaded[newServiceConfig.name]
 
-      await createRoute(webServer, updateAttributes, services)
-      this.app.components.ServiceWatcher.services[updateAttributes.serviceName] = { ...updateAttributes }
-
+        await createRoute(webServer, newServiceConfig)
+        this.app.components.ServiceWatcher.servicesLoaded[newServiceConfig.name] = newServiceConfig
+      }
     } catch (err) {
       console.error(err)
     }
