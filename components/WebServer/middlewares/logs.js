@@ -6,8 +6,8 @@ const {
 
 module.exports = async (req, res, next) => {
   try {
-    //req.payload.service contains docker label and other information
     debug('Logs middlewares is enable')
+    debug(req.payload.logs)
 
     if (typeof next === 'function') next()
     else return

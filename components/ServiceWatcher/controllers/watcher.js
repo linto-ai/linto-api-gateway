@@ -44,7 +44,6 @@ async function serviceDiscovery() {
 
 async function dockerService(Type, Action, Actor) {
   try {
-
     const id = Actor?.ID
     const serviceName = Actor?.Attributes?.name
     let service = new Service(serviceName)

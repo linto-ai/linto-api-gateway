@@ -1,24 +1,20 @@
-const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:list')
+const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:available')
 
-async function available(service, servicesLoaded) {
+async function available(serviceToStart, servicesLoaded) {
   try {
-    let isAvailable = true
-    if (Object.keys(servicesLoaded).length === 0) return isAvailable
+    if (Object.keys(servicesLoaded).length === 0) return true
 
-    for (const serviceName in servicesLoaded) {
-      if (serviceName !== service.name) {
-        service.label.endpoints.split(',').map(endpoint => {
-
-          servicesLoaded[serviceName].label.endpoints.split(',').map(serviceEndpoint => {
-            if (serviceEndpoint === endpoint) {
-              isAvailable = false
-            }
-          })
-        })
+    for (const runningService in servicesLoaded) {
+      if (runningService !== serviceToStart.name) {
+        for (const serviceEndpoint in serviceToStart.label.endpoints) {
+          for (const runningServiceEndpoint in servicesLoaded[runningService].label.endpoints) {
+            if (serviceEndpoint === runningServiceEndpoint) return false
+          }
+        }
       }
-      if (!isAvailable) break
     }
-    return isAvailable
+    
+    return true
   } catch (err) {
     console.error(err)
   }

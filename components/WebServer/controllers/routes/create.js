@@ -4,17 +4,21 @@ const { createProxyMiddleware } = require('http-proxy-middleware')
 const webserver_middlewares = require(`${process.cwd()}/components/WebServer/middlewares`)
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
 
-async function create(webServer, service) {
+async function create(webServer, serviceToStart) {
   try {
-    let serviceHost = 'http://' + service.serviceName
+    // let serviceHost = 'http://' + serviceToStart.serviceName
+    let serviceHost = 'http://dev.linto.local' //TODO: User serviceName as host
 
-    if (service.label.port)
-      serviceHost += `:${service.label.port}`
+    if (serviceToStart.label.port)
+      serviceHost += `:${serviceToStart.label.port}`
 
-    const middlewares = loadMiddleware(service.label.middlewares)
 
-    service.label.endpoints.split(',').map(endpoint => {
-      const stripPathPrefix = '^' + endpoint
+    const endpoints = serviceToStart.label.endpoints
+    Object.keys(serviceToStart.label.endpoints).map(endpointPath => {
+      const stripPathPrefix = '^' + endpointPath
+      const routeConfig = endpoints[endpointPath]
+
+      const loadedMiddleware = loadMiddleware(routeConfig.middlewares)
 
       const proxy = createProxyMiddleware({
         target: serviceHost,
@@ -22,8 +26,8 @@ async function create(webServer, service) {
           [stripPathPrefix]: '/', // remove the uri endpoint from req
         },
         onProxyReq: async (proxyReq, req, res, next) => {
-          // req.payload = {/*Add metadata for middleware */}
-          await middlewareExec(middlewares, req, res, next)
+          req.payload = { ...routeConfig.middlewareConfig }
+          await middlewareExec(loadedMiddleware, req, res, next)
         },
 
         onProxyRes: (async (responseBuffer, proxyRes, req, res) => {
@@ -31,25 +35,23 @@ async function create(webServer, service) {
         }),
 
       })
-
-      webServer.app.use(endpoint, proxy)
+      webServer.app.use(endpointPath, proxy)
     })
+
   } catch (err) {
     console.error(err)
   }
 }
 
-function loadMiddleware(serviceMiddlewares) {
-  let middlewares = []
-  serviceMiddlewares.split(',').map(middleware => {
+function loadMiddleware(middlewaresList) {
+  const middlewares = middlewaresList.map(middleware => {
     if (webserver_middlewares[middleware]) {
-      middlewares.push(webserver_middlewares[middleware])
+      return webserver_middlewares[middleware]
     } else {
       console.error(`Middleware ${middleware} unknown`)
       throw new ServiceSettingsError(`Middleware ${middleware} unknown`)
     }
   })
-
   return middlewares
 }
 
