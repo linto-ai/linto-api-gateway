@@ -12,7 +12,7 @@ module.exports = async function () {
         await createRoute(webServer, serviceConfig)
         this.app.components.ServiceWatcher.servicesLoaded[serviceConfig.name] = serviceConfig
       } else {
-        debug('Requested endpoint is not available ' + serviceConfig.label.endpoints)
+        debug('Requested endpoint is not available for the service ' + serviceConfig.name)
       }
     } catch (err) {
       console.error(err)

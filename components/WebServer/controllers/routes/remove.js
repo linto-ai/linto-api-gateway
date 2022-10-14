@@ -1,9 +1,11 @@
 const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:remove')
 
+
 async function remove(webServer, service) {
   try {
-    service.label.endpoints.split(',').map(endpoint => {
-      let routes = webServer.app._router.stack
+    let routes = webServer.app._router.stack
+
+    Object.keys(service.label.endpoints).map(endpoint => {
       routes.forEach((route, i, routes) => {
         removeRouteFromRouter(route, i, routes, endpoint)
       })

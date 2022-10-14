@@ -1,7 +1,5 @@
 const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:events:service-remove')
 
-const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
-
 const { removeRoute } = require(`${process.cwd()}/components/WebServer/controllers/routes/`)
 
 
