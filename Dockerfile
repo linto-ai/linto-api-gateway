@@ -6,8 +6,9 @@ COPY package.json ./
 
 RUN npm install
 COPY . .
+COPY ./docker-entrypoint.sh /
 
 HEALTHCHECK CMD curl -f http://localhost
 
 EXPOSE 80
-CMD ["node", "app.js" ]
+ENTRYPOINT ["/docker-entrypoint.sh"]
