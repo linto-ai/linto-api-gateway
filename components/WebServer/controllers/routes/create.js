@@ -6,8 +6,7 @@ const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWat
 
 async function create(webServer, serviceToStart) {
   try {
-    // let serviceHost = 'http://' + serviceToStart.serviceName
-    let serviceHost = 'http://dev.linto.local' //TODO: User serviceName as host
+    let serviceHost = 'http://' + serviceToStart.serviceName
 
     if (serviceToStart.label.port)
       serviceHost += `:${serviceToStart.label.port}`
