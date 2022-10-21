@@ -6,8 +6,12 @@ const {
 
 module.exports = async (req, res, next) => {
   try {
-    debug('Logs middlewares is enable')
-    debug(req.payload.logs)
+    const { rawHeaders, httpVersion, method, socket, url } = req
+    const { remoteAddress, remoteFamily } = socket
+    console.log()
+    console.log(`Date : ${new Date().toJSON()}`)
+    console.log(`New user entry ${method} on ${url}`)
+    console.log(`User IP : ${remoteAddress} - ${remoteFamily}`)
 
     if (typeof next === 'function') next()
     else return
