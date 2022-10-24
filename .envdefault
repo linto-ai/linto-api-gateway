@@ -1,17 +1,4 @@
 # Saas api settings
 SAAS_API_GATEWAY_HTTP_PORT=80
-SAAS_API_BASE_PATH=/api
 
 COMPONENTS=WebServer,ServiceWatcher
-
-# Mongo
-DB_DRIVER=mongo
-DB_HOST=localhost
-DB_PORT=27017
-DB_REQUIRE_LOGIN=true
-DB_USER=root
-DB_PASS=example
-DB_NAME=conversations
-
-DEV_DISABLE_AUlTH=false
-LOGGER_ENABLED=false
