@@ -14,23 +14,22 @@ class Service {
   }
 
   setServiceInspectMetadata(serviceInspect) {
-    let containerLabel = serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Labels
     let stackLabel = serviceInspect?.Spec?.Labels
 
-    if (containerLabel['linto.gateway.enable'] === 'true')
+    if (stackLabel['linto.gateway.enable'] === 'true')
       this.label.enable = true
     else return
 
-    if (!containerLabel['linto.gateway.endpoints']) throw new ServiceSettingsError()
+    if (!stackLabel['linto.gateway.endpoints']) throw new ServiceSettingsError()
 
-    this.label.endpoints = this.generateEndpointMiddlewareSettings(containerLabel)
+    this.label.endpoints = this.generateEndpointMiddlewareSettings(stackLabel)
 
-    this.label.port = containerLabel['linto.gateway.port']
-    this.label.desc = containerLabel['linto.gateway.desc']
+    this.label.port = stackLabel['linto.gateway.port']
+    this.label.desc = stackLabel['linto.gateway.desc']
 
     this.stack.image = stackLabel['com.docker.stack.image']
     this.stack.namespace = stackLabel['com.docker.stack.namespace']
-    this.stack.name = containerLabel['com.docker.stack.namespace']
+    this.stack.name = stackLabel['com.docker.stack.namespace']
 
     this.serviceName = this.name.replace(this.stack.namespace + '_', '')
   }
@@ -39,26 +38,26 @@ class Service {
     return this.label.enable
   }
 
-  generateEndpointMiddlewareSettings(containerLabel) {
+  generateEndpointMiddlewareSettings(stackLabel) {
     let endpoints = {}
-    containerLabel['linto.gateway.endpoints'].split(',').map(endpoint => {
+    stackLabel['linto.gateway.endpoints'].split(',').map(endpoint => {
       const keyName = endpoint
 
       endpoints[keyName] = { middlewares: [], middlewareConfig: {} }
 
       const prefixLabel = 'linto.gateway.endpoint.' + endpoint.replace('/', '')
 
-      Object.keys(containerLabel).map(label => {
+      Object.keys(stackLabel).map(label => {
         if (label.includes(prefixLabel)) {
           const [linto, gateway, endpoint, endpointName, middleware, middlewareName, middlewareConfigKey] = label.split('.')
           if (!endpoints[keyName].middlewareConfig[middlewareName] && middlewareName) {
             endpoints[keyName].middlewareConfig[middlewareName] = {}
           }
           if (!middlewareName) { // Load middleware name
-            endpoints['/' + endpointName].middlewares = containerLabel[label].split(',')
+            endpoints['/' + endpointName].middlewares = stackLabel[label].split(',')
           }
           if (middlewareConfigKey) { // Load middleware config
-            endpoints['/' + endpointName].middlewareConfig[middlewareName][middlewareConfigKey] = containerLabel[label]
+            endpoints['/' + endpointName].middlewareConfig[middlewareName][middlewareConfigKey] = stackLabel[label]
           }
 
         }

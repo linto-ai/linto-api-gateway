@@ -53,6 +53,7 @@ async function dockerService(Type, Action, Actor) {
 
     } else {
       const serviceInspect = await docker.getService(id).inspect()
+
       service.setServiceInspectMetadata(serviceInspect)
 
       if (service.isEnable()) {
@@ -74,7 +75,7 @@ async function dockerService(Type, Action, Actor) {
 }
 
 function compareDockerSpec(serviceInspect) {
-  const spec = serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Labels
-  const previousSpec = serviceInspect?.PreviousSpec?.TaskTemplate?.ContainerSpec?.Labels
+  const spec = serviceInspect?.Spec?.Labels
+  const previousSpec = serviceInspect?.PreviousSpec?.Labels
   return _.isEqual(spec, previousSpec)
 }
