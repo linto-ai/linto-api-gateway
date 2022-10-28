@@ -18,6 +18,8 @@ function configureDefaults() {
 
 		process.env.SAAS_API_GATEWAY_HTTP_PORT = ifHas(process.env.SAAS_API_GATEWAY_HTTP_PORT, envdefault.SAAS_API_GATEWAY_HTTP_PORT)
 		process.env.COMPONENTS = ifHas(process.env.COMPONENTS, envdefault.COMPONENTS)
+		process.env.EXPRESS_SIZE_FILE_MAX = ifHas(process.env.EXPRESS_SIZE_FILE_MAX, envdefault.EXPRESS_SIZE_FILE_MAX)
+
 	} catch (e) {
 		console.error(e)
 		process.exit(1)

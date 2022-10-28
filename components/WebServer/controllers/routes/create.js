@@ -21,8 +21,9 @@ async function create(webServer, serviceToStart) {
 
       const proxy = createProxyMiddleware({
         target: serviceHost,
+        changeOrigin: true,
         pathRewrite: {
-          [stripPathPrefix]: '/', // remove the uri endpoint from req
+          [endpointPath]: '/', // remove the uri endpoint from req
         },
         onProxyReq: async (proxyReq, req, res, next) => {
           req.payload = { ...routeConfig.middlewareConfig }
@@ -30,7 +31,7 @@ async function create(webServer, serviceToStart) {
         },
 
         onProxyRes: (async (responseBuffer, proxyRes, req, res) => {
-          // debug('TODO: Request is complete, do stuff ?)
+
         }),
 
       })

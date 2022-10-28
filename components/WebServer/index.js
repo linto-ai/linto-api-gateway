@@ -25,6 +25,19 @@ class WebServer extends Component {
         this.app.use(bodyParser.json())
         this.app.use(fileUpload())
 
+        this.app.use(fileUpload({
+            uriDecodeFileNames: true
+        }))
+
+        this.app.use(bodyParser.json({
+            limit: process.env.EXPRESS_SIZE_FILE_MAX,
+            extended: true
+        }))
+        this.app.use(bodyParser.urlencoded({
+            limit: process.env.EXPRESS_SIZE_FILE_MAX,
+            extended: true
+        }))
+
         // require('./routes/router.js')(this)  //TODO: Gateway do'nt have any API (only service discovery)
 
         this.app.set('trust proxy', true)
