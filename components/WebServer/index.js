@@ -15,16 +15,8 @@ class WebServer extends Component {
         this.router = express.Router()
         this.id = this.constructor.name
 
-        this.app.use(function (req, res, next) {
-            res.header("Access-Control-Allow-Origin", "*")
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-            next()
-        })
-
-        this.app.use(bodyParser.urlencoded({ extended: true }))
-        this.app.use(bodyParser.json())
-        this.app.use(fileUpload())
-
+        this.app.set('etag', false)
+        this.app.set('trust proxy', true)
         this.app.use(fileUpload({
             uriDecodeFileNames: true
         }))
@@ -38,10 +30,15 @@ class WebServer extends Component {
             extended: true
         }))
 
-        // require('./routes/router.js')(this)  //TODO: Gateway do'nt have any API (only service discovery)
+        this.app.use(function (req, res, next) {
+            res.header("Access-Control-Allow-Origin", "*")
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+            next()
+        })
+
+        require('./routes/router.js')(this)  //TODO: Gateway do not have any API (only service discovery)
 
         this.app.set('trust proxy', true)
-
         WebServerErrorHandler.init(this)
 
         this.app.listen(process.env.SAAS_API_GATEWAY_HTTP_PORT, function () {
