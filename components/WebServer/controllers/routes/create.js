@@ -3,6 +3,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware')
 
 const webserver_middlewares = require(`${process.cwd()}/components/WebServer/middlewares`)
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
+const express_proxy = require('express-http-proxy');
+
 
 async function create(webServer, serviceToStart) {
   try {
@@ -14,27 +16,24 @@ async function create(webServer, serviceToStart) {
 
     const endpoints = serviceToStart.label.endpoints
     Object.keys(serviceToStart.label.endpoints).map(endpointPath => {
-      const stripPathPrefix = '^' + endpointPath
       const routeConfig = endpoints[endpointPath]
 
       const loadedMiddleware = loadMiddleware(routeConfig.middlewares)
 
-      const proxy = createProxyMiddleware({
-        target: serviceHost,
-        changeOrigin: true,
-        pathRewrite: {
-          [endpointPath]: '/', // remove the uri endpoint from req
+      const proxy = express_proxy(serviceHost, {
+
+        proxyErrorHandler: function(err, res, next) {
+          console.error(err)
+          next(err);
         },
-        onProxyReq: async (proxyReq, req, res, next) => {
-          req.payload = { ...routeConfig.middlewareConfig }
-          await middlewareExec(loadedMiddleware, req, res, next)
-        },
-
-        onProxyRes: (async (responseBuffer, proxyRes, req, res) => {
-
-        }),
-
+        proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+          srcReq.payload = { ...routeConfig.middlewareConfig }
+          middlewareExec(loadedMiddleware, srcReq, undefined)
+          return proxyReqOpts
+        }
       })
+
+
       webServer.app.use(endpointPath, proxy)
     })
 

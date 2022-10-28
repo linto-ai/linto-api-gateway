@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
     if (typeof next === 'function') next()
     else return
   } catch (error) {
-    res.status(error.status).send({ message: error.message })
+    console.error(error)
+    // res.status(error.status).send({ message: error.message })
   }
 }
