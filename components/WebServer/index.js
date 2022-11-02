@@ -2,11 +2,9 @@ const debug = require('debug')('saas-api-gateway:webserver')
 const Component = require(`../component.js`)
 
 const express = require('express')
-const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 
 const WebServerErrorHandler = require('./error/handler')
-
 
 class WebServer extends Component {
     constructor(app) {
@@ -17,9 +15,6 @@ class WebServer extends Component {
 
         this.app.set('etag', false)
         this.app.set('trust proxy', true)
-        this.app.use(fileUpload({
-            uriDecodeFileNames: true
-        }))
 
         this.app.use(bodyParser.json({
             limit: process.env.EXPRESS_SIZE_FILE_MAX,
