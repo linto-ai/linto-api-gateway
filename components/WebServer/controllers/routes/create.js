@@ -1,10 +1,9 @@
 const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:create')
-const { createProxyMiddleware } = require('http-proxy-middleware')
 
 const webserver_middlewares = require(`${process.cwd()}/components/WebServer/middlewares`)
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
-const express_proxy = require('express-http-proxy');
 
+const httpProxy = require('http-proxy')
 
 async function create(webServer, serviceToStart) {
   try {
@@ -13,28 +12,29 @@ async function create(webServer, serviceToStart) {
     if (serviceToStart.label.port)
       serviceHost += `:${serviceToStart.label.port}`
 
-
     const endpoints = serviceToStart.label.endpoints
+
     Object.keys(serviceToStart.label.endpoints).map(endpointPath => {
       const routeConfig = endpoints[endpointPath]
-
       const loadedMiddleware = loadMiddleware(routeConfig.middlewares)
 
-      const proxy = express_proxy(serviceHost, {
+      let proxy = httpProxy.createProxyServer({})
 
-        proxyErrorHandler: function(err, res, next) {
-          console.error(err)
-          next(err);
-        },
-        proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
-          srcReq.payload = { ...routeConfig.middlewareConfig }
-          middlewareExec(loadedMiddleware, srcReq, undefined)
-          return proxyReqOpts
-        }
+      proxy.on('error', function(err) {
+        console.error(err)
       })
 
+      debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName}`)
 
-      webServer.app.use(endpointPath, proxy)
+      webServer.app.use(endpointPath, async (req, res, next) => {
+        // Execute middleware
+        req.payload = { ...routeConfig.middlewareConfig }
+        await middlewareExec(loadedMiddleware, req, res, undefined)
+
+        // Proxy request
+        proxy.web(req, res, { target: serviceHost })
+
+      })
     })
 
   } catch (err) {
@@ -54,7 +54,7 @@ function loadMiddleware(middlewaresList) {
   return middlewares
 }
 
-async function middlewareExec(middlewares, req, res, next) {
+async function middlewareExec(middlewares, req, res, next = undefined) {
   middlewares.map(middleware => {
     middleware(req, res, next)
   })

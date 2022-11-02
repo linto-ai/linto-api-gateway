@@ -53,11 +53,9 @@ async function dockerService(Type, Action, Actor) {
 
     } else {
       const serviceInspect = await docker.getService(id).inspect()
-
       service.setServiceInspectMetadata(serviceInspect)
 
       if (service.isEnable()) {
-
         if (Action === 'create') {
           this.emit(`${Type}-${Action}`, service) // service-create
         } else if (Action === 'update') {
@@ -67,6 +65,10 @@ async function dockerService(Type, Action, Actor) {
             debug('No change detected for service update')
           }
         }
+      } else {
+        // Label can be disable after a service update
+        if (this.servicesLoaded[service.name]) 
+          this.emit(`${Type}-remove`, this.servicesLoaded[service.name]) // service-remove
       }
     }
   } catch (err) {

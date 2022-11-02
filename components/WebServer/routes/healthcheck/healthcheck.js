@@ -1,14 +1,14 @@
-const debug = require('debug')('saas-api-gateway:webserver:api:routes:api:token')
+const debug = require('debug')('saas-api-gateway:webserver:api:routes:api:healthcheck')
 
 module.exports = (webserver) => {
   return [
     {
-      endpoint: '/log',
+      endpoint: '/healthcheck',
       method: 'get',
       require_logs: true,
       controller: (req, res, next) => {
         res.status(200).send({
-          message: 'My first gateway path'
+          status : 'ok'
         })
       }
     }
