@@ -6,7 +6,7 @@ const {
 
 module.exports = async (req, res, next) => {
   try {
-    debug('Auth middlewares is enable')
+    debug('Auth middlewares is enabled')
     debug(req.payload.auths)
 
     if (typeof next === 'function') next()

@@ -5,24 +5,24 @@ const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWat
 class Service {
   constructor(serviceName, serviceInspect) {
     this.label = {
-      enable: false
+      enabled: false
     }
     this.stack = {}
     this.name = serviceName
 
-    if (serviceInspect) this.setServiceInspectMetadata(serviceInspect)
+    if (serviceInspect) this.setMetadata(serviceInspect)
   }
 
-  setServiceInspectMetadata(serviceInspect) {
+  setMetadata(serviceInspect) {
     let stackLabel = serviceInspect?.Spec?.Labels
 
     if (stackLabel['linto.gateway.enable'] === 'true')
-      this.label.enable = true
+      this.label.enabled = true
     else return
 
     if (!stackLabel['linto.gateway.endpoints']) throw new ServiceSettingsError()
 
-    this.label.endpoints = this.generateEndpointMiddlewareSettings(stackLabel)
+    this.label.endpoints = this.setupMiddlewareSettings(stackLabel)
 
     this.label.port = stackLabel['linto.gateway.port']
     this.label.desc = stackLabel['linto.gateway.desc']
@@ -34,11 +34,11 @@ class Service {
     this.serviceName = this.name.replace(this.stack.namespace + '_', '')
   }
 
-  isEnable() {
-    return this.label.enable
+  isEnabled() {
+    return this.label.enabled
   }
 
-  generateEndpointMiddlewareSettings(stackLabel) {
+  setupMiddlewareSettings(stackLabel) {
     let endpoints = {}
     stackLabel['linto.gateway.endpoints'].split(',').map(endpoint => {
       const keyName = endpoint

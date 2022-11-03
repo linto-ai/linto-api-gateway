@@ -17,7 +17,7 @@ let init = function (webserver) {
   Object.keys(GatewayException).forEach(key => customException.push(key))
   Object.keys(AuthsException).forEach(key => customException.push(key))
 
-  webserver.app.use(function (err, req, res, next) {
+  webserver.express.use(function (err, req, res, next) {
     if (err) console.error(err)
 
     if (customException.indexOf(err.name) > -1) {

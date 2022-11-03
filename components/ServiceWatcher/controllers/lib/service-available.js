@@ -1,13 +1,13 @@
 const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:available')
 
-async function available(serviceToStart, servicesLoaded) {
+module.exports = async function availableService(serviceToStart) {
   try {
-    if (Object.keys(servicesLoaded).length === 0) return true
+    if (Object.keys(this.servicesLoaded).length === 0) return true
 
-    for (const runningService in servicesLoaded) {
+    for (const runningService in this.servicesLoaded) {
       if (runningService !== serviceToStart.name) {
         for (const serviceEndpoint in serviceToStart.label.endpoints) {
-          for (const runningServiceEndpoint in servicesLoaded[runningService].label.endpoints) {
+          for (const runningServiceEndpoint in this.servicesLoaded[runningService].label.endpoints) {
             if (serviceEndpoint === runningServiceEndpoint) return false
           }
         }
@@ -18,9 +18,4 @@ async function available(serviceToStart, servicesLoaded) {
   } catch (err) {
     console.error(err)
   }
-}
-
-
-module.exports = {
-  available
 }

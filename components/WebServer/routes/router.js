@@ -28,7 +28,7 @@ class Router {
                 )
 
                 // Load middlewares to use after api controller
-                webServer.app[method](
+                webServer.express[method](
                     level + route.endpoint,
                     controller
                 )
