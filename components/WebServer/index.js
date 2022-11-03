@@ -9,34 +9,35 @@ const WebServerErrorHandler = require('./error/handler')
 class WebServer extends Component {
     constructor(app) {
         super(app)
-        this.app = express()
+        this.app = app
+
+        this.express = express()
         this.router = express.Router()
         this.id = this.constructor.name
 
-        this.app.set('etag', false)
-        this.app.set('trust proxy', true)
+        this.express.set('etag', false)
+        this.express.set('trust proxy', true)
 
-        this.app.use(bodyParser.json({
+        this.express.use(bodyParser.json({
             limit: process.env.EXPRESS_SIZE_FILE_MAX,
             extended: true
         }))
-        this.app.use(bodyParser.urlencoded({
+        this.express.use(bodyParser.urlencoded({
             limit: process.env.EXPRESS_SIZE_FILE_MAX,
             extended: true
         }))
-
-        this.app.use(function (req, res, next) {
+        this.express.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*")
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
             next()
         })
 
-        require('./routes/router.js')(this)  //TODO: Gateway do not have any API (only service discovery)
+        require('./routes/router.js')(this)
 
-        this.app.set('trust proxy', true)
+        this.express.set('trust proxy', true)
         WebServerErrorHandler.init(this)
 
-        this.app.listen(process.env.SAAS_API_GATEWAY_HTTP_PORT, function () {
+        this.express.listen(process.env.SAAS_API_GATEWAY_HTTP_PORT, function () {
             debug(`Express launch on ${process.env.SAAS_API_GATEWAY_HTTP_PORT}`)
         })
         return this.init()

@@ -4,11 +4,9 @@ const _ = require('lodash');
 const Docker = require('dockerode')
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
-const { Service } = require('./lib/service')
+const { Service } = require('./dao/service')
 
 module.exports = async function () {
-  serviceDiscovery.call(this)
-
   const streamEvent = await docker.getEvents()
 
   streamEvent.on('data', async buffer => {
@@ -21,23 +19,11 @@ module.exports = async function () {
           dockerService.call(this, Type, Action, Actor)
           break;
         default:
-          debug(`Unmanaged docker type ${Type}-${Action}`)
+          debug(`Unmanaged docker event type ${Type}-${Action} for ${Actor?.Attributes?.name}`)
       }
 
     } catch (err) {
       process.stdout.write(`${err.message}\n`)
-    }
-  })
-}
-
-async function serviceDiscovery() {
-  const listService = await docker.listServices()
-  listService.map(async serviceAlive => {
-    const serviceInspect = await docker.getService(serviceAlive.ID).inspect()
-    const service = new Service(serviceInspect?.Spec.Name, serviceInspect)
-
-    if (service.isEnable()) {
-      this.emit(`service-create`, service)
     }
   })
 }
@@ -49,26 +35,25 @@ async function dockerService(Type, Action, Actor) {
     let service = new Service(serviceName)
 
     if (Action === 'remove') {
-      if (this.servicesLoaded[service.name]) this.emit(`${Type}-${Action}`, this.servicesLoaded[service.name]) // service-remove
+      if (this.servicesLoaded[service.name])
+        this.emit(`${Type}-${Action}`, this.servicesLoaded[service.name])
 
     } else {
       const serviceInspect = await docker.getService(id).inspect()
-      service.setServiceInspectMetadata(serviceInspect)
+      service.setMetadata(serviceInspect)
 
-      if (service.isEnable()) {
+      if (service.isEnabled() && this.available(service, this.servicesLoaded)) {
         if (Action === 'create') {
-          this.emit(`${Type}-${Action}`, service) // service-create
+          this.emit(`${Type}-${Action}`, service, this.servicesLoaded) // service-create
         } else if (Action === 'update') {
           if (serviceInspect.PreviousSpec && !compareDockerSpec(serviceInspect)) { // Verify if the service was previously running
-            this.emit(`${Type}-${Action}`, service) // service-update
+            this.emit(`${Type}-${Action}`, service, this.servicesLoaded) // service-update
           } else {
             debug('No change detected for service update')
           }
         }
-      } else {
-        // Label can be disable after a service update
-        if (this.servicesLoaded[service.name]) 
-          this.emit(`${Type}-remove`, this.servicesLoaded[service.name]) // service-remove
+      } else if (this.servicesLoaded[service.name]) {
+        this.emit(`${Type}-remove`, this.servicesLoaded[service.name]) // service-remove
       }
     }
   } catch (err) {

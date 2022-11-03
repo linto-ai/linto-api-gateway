@@ -12,10 +12,12 @@ class Ctl {
             this.components = {}
             process.env.COMPONENTS.split(',').reduce((prev, componentFolderName) => {
                 return prev.then(async () => { await this.use(componentFolderName) })
-            }, Promise.resolve()).then(() => {
+            }, Promise.resolve()).then(async () => {
                 // Do some stuff after all components being loaded
+                if(this.components['ServiceWatcher'] !== undefined) {
+                    await this.components['ServiceWatcher'].discovery()
+                }
             })
-            debug(this)
         } catch (error) {
             console.error(error)
             process.exit(1)

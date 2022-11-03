@@ -1,6 +1,6 @@
 # Saas api settings
 SAAS_API_GATEWAY_HTTP_PORT=80
 
-COMPONENTS=WebServer,ServiceWatcher
+COMPONENTS=ServiceWatcher,WebServer
 
 EXPRESS_SIZE_FILE_MAX=500mb

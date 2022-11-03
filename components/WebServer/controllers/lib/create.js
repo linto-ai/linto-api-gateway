@@ -5,7 +5,7 @@ const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWat
 
 const httpProxy = require('http-proxy')
 
-async function create(webServer, serviceToStart) {
+async function create(serviceToStart) {
   try {
     let serviceHost = 'http://' + serviceToStart.serviceName
 
@@ -26,7 +26,7 @@ async function create(webServer, serviceToStart) {
 
       debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName}`)
 
-      webServer.app.use(endpointPath, async (req, res, next) => {
+      this.express.use(endpointPath, async (req, res, next) => {
         // Execute middleware
         req.payload = { ...routeConfig.middlewareConfig }
         await middlewareExec(loadedMiddleware, req, res, undefined)
