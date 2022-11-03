@@ -24,7 +24,7 @@ async function create(serviceToStart) {
         console.error(err)
       })
 
-      debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName}`)
+      debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName} with host ${serviceHost}`)
 
       this.express.use(endpointPath, async (req, res, next) => {
         // Execute middleware
