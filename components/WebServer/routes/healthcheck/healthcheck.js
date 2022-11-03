@@ -5,7 +5,6 @@ module.exports = (webserver) => {
     {
       endpoint: '/healthcheck',
       method: 'get',
-      require_logs: true,
       controller: (req, res, next) => {
         res.status(200).send({
           status : 'ok'

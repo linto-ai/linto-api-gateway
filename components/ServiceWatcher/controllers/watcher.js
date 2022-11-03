@@ -19,7 +19,7 @@ module.exports = async function () {
           dockerService.call(this, Type, Action, Actor)
           break;
         default:
-          debug(`Unmanaged docker event type ${Type}-${Action} for ${Actor?.Attributes?.name}`)
+          // Other docker type events are not managed
       }
 
     } catch (err) {
@@ -34,7 +34,9 @@ async function dockerService(Type, Action, Actor) {
     const serviceName = Actor?.Attributes?.name
     let service = new Service(serviceName)
 
-    if (Action === 'remove') {
+    if (Action !== 'update' && Action !== 'remove' && Action !== 'create') {
+      debug(`Unmanaged docker event type ${Type}-${Action} for ${Actor?.Attributes?.name}`)
+    } else if (Action === 'remove') {
       if (this.servicesLoaded[service.name])
         this.emit(`${Type}-${Action}`, this.servicesLoaded[service.name])
 

@@ -8,5 +8,7 @@ RUN npm install
 COPY . .
 COPY ./docker-entrypoint.sh /
 
+HEALTHCHECK CMD curl -f http://localhost/gateway/healthcheck
+
 EXPOSE 80
 ENTRYPOINT ["/docker-entrypoint.sh"]
