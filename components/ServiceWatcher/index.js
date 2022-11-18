@@ -12,6 +12,7 @@ class ServiceWatcher extends Component {
 
         this.discovery = lib.discovery.bind(this)
         this.available = lib.available.bind(this)
+        this.list = lib.list.bind(this)
 
         return this.init()
     }

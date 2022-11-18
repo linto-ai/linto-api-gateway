@@ -1,13 +1,13 @@
 /****************
-***** Auth ******
+*** Billing *****
 *****************/
 
-const ExceptionType = 'auths'
+const ExceptionType = 'billing'
 
-class AuthsError extends Error {
+class BillingError extends Error {
   constructor(message) {
     super()
-    this.name = 'AuthsError'
+    this.name = 'BillingError'
     this.type = ExceptionType
     this.status = '500'
     if (message) this.message = message
@@ -17,5 +17,5 @@ class AuthsError extends Error {
 
 
 module.exports = {
-  AuthsError,
+  BillingError,
 }
