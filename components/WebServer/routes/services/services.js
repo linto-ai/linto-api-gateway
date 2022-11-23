@@ -4,6 +4,11 @@ const { list } = require(process.cwd() + '/components/WebServer/controllers/serv
 module.exports = (webserver) => {
   return [
     {
+      endpoint: '/services/:scope',
+      method: 'get',
+      controller: list.bind(webserver)
+    },
+    {
       endpoint: '/services',
       method: 'get',
       controller: list.bind(webserver)

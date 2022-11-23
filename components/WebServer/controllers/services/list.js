@@ -5,7 +5,7 @@ async function list(req, res, next) {
     if (!this.app.components['ServiceWatcher']) {
       res.status(404).send('ServiceWatcher component not properly loaded')
     }else{
-      let serviceList = await this.app.components['ServiceWatcher'].list()
+      let serviceList = await this.app.components['ServiceWatcher'].list(req.params.scope)
       res.status(200).send(serviceList)
     }
   } catch (err) {
