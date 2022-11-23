@@ -29,6 +29,9 @@ class Service {
       this.container.env = this.setupEnvSettings(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env)
 
     this.label.port = stackLabel['linto.gateway.port']
+    if (stackLabel['linto.gateway.scope'])
+      this.label.scope = stackLabel['linto.gateway.scope'].split(',')
+
     try {
       this.label.desc = JSON.parse(stackLabel['linto.gateway.desc'])
     } catch (err) {
