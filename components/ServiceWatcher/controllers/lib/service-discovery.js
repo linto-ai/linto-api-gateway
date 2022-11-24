@@ -14,8 +14,6 @@ module.exports = async function serviceDiscovery() {
 
     if (service.isEnabled() && this.available(service, this.servicesLoaded)) {
       this.emit(`service-create`, service, this.servicesLoaded)
-    } else {
-      debug('Requested endpoint is not available for the service ' + service.name)
     }
   })
 }

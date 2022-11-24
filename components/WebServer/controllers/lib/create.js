@@ -7,10 +7,7 @@ const httpProxy = require('http-proxy')
 
 async function create(serviceToStart) {
   try {
-    let serviceHost = 'http://' + serviceToStart.serviceName
-
-    if (serviceToStart.label.port)
-      serviceHost += `:${serviceToStart.label.port}`
+    let serviceHost = serviceToStart.host
 
     const endpoints = serviceToStart.label.endpoints
 
