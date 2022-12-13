@@ -24,7 +24,11 @@ module.exports = async function serviceList(scope = undefined) {
           desc: service.label.desc,
           scope: service.label.scope,
           image: service.image,
-          endpoints: []
+          endpoints: [],
+          sub_services: {
+            diarization: [],
+            punctuation: []
+          }
         }
         for (const endpoint in service.label.endpoints) {
           let endpointData = { endpoint: endpoint }
@@ -46,7 +50,23 @@ module.exports = async function serviceList(scope = undefined) {
           }
 
           await axios.get(service.host + '/list-services').then(function (response) {
-            serviceData.sub_services = response.data
+            if (response.data.diarization.length > 0) {
+              for (let diarization of response.data.diarization) {
+                try {
+                  if (diarization.info) diarization.info = JSON.parse(diarization.info)
+                } catch (err) { }
+                serviceData.sub_services.diarization.push(diarization)
+              }
+            }
+            if (response.data.punctuation.length > 0) {
+              for (let punctuation of response.data.punctuation) {
+                try {
+                  if (punctuation.info) punctuation.info = JSON.parse(punctuation.info)
+                } catch (err) { }
+                serviceData.sub_services.punctuation.push(punctuation)
+              }
+            }
+
 
           }).catch(function (error) {
             console.log(error)
