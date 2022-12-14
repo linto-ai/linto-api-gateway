@@ -8,14 +8,13 @@ class Service {
       enabled: false
     }
     this.stack = {}
-    this.container = { env: {} }
     this.name = serviceName
+    this.id = serviceInspect.ID
 
     if (serviceInspect) this.setMetadata(serviceInspect)
   }
 
   setMetadata(serviceInspect) {
-
     let stackLabel = serviceInspect?.Spec?.Labels
 
     if (stackLabel['linto.gateway.enable'] === 'true')
@@ -25,8 +24,6 @@ class Service {
     if (!stackLabel['linto.gateway.endpoints']) throw new ServiceSettingsError()
 
     this.label.endpoints = this.setupMiddlewareSettings(stackLabel)
-    if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Env)
-      this.container.env = this.setupEnvSettings(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env)
 
     this.label.port = stackLabel['linto.gateway.port']
     if (stackLabel['linto.gateway.scope'])
@@ -45,6 +42,7 @@ class Service {
     this.serviceName = this.name.replace(this.stack.namespace + '_', '')
 
     this.host = 'http://' + this.serviceName
+
     if (this.label.port)
       this.host += `:${this.label.port}`
   }
@@ -52,13 +50,14 @@ class Service {
   isEnabled() {
     return this.label.enabled
   }
-  setupEnvSettings(env) {
-    let envSettings = {}
-    env.map(env => {
-      const [key, value] = env.split('=')
-      envSettings[key] = value
+
+  extractEnv(dockerEnv, searchedKey) {
+    let env = {}
+    dockerEnv.map(envVar => {
+      const [envKey, envValue] = envVar.split('=')
+      if (searchedKey.includes(envKey)) env[envKey.toLowerCase()] = envValue
     })
-    return envSettings
+    return env
   }
 
   setupMiddlewareSettings(stackLabel) {
@@ -96,8 +95,6 @@ class Service {
 
   show() {
     let service = Object.assign({}, this)
-    delete service.container
-
     return service
   }
 }

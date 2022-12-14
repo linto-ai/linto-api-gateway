@@ -1,6 +1,9 @@
 const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:lib:service-list')
 const axios = require('axios')
 
+const Docker = require('dockerode')
+const docker = new Docker({ socketPath: '/var/run/docker.sock' })
+
 module.exports = async function serviceList(scope = undefined) {
   let listServices = {
     transcription: [],
@@ -43,10 +46,10 @@ module.exports = async function serviceList(scope = undefined) {
         }
 
         if (service.stack.image.includes('linto-platform-transcription-service')) {
-          if (service.container.env) {
-            serviceData.lang = service.container.env.LANGUAGE
-            serviceData.model_quality = service.container.env.MODEL_QUALITY
-            serviceData.accoustic = service.container.env.ACCOUSTIC
+          const serviceInspect = await docker.getService(service.id).inspect()
+          if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Env) {
+            const dockerEnv = service.extractEnv(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env, ['LANGUAGE', 'MODEL_QUALITY', 'ACCOUSTIC'])
+            serviceData = { ...serviceData, ...dockerEnv }
           }
 
           await axios.get(service.host + '/list-services').then(function (response) {
@@ -85,3 +88,4 @@ module.exports = async function serviceList(scope = undefined) {
   }
   return listServices
 }
+
