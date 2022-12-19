@@ -1,6 +1,9 @@
 const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:lib:service-list')
 const axios = require('axios')
 
+const Docker = require('dockerode')
+const docker = new Docker({ socketPath: '/var/run/docker.sock' })
+
 module.exports = async function serviceList(scope = undefined) {
   let listServices = {
     transcription: [],
@@ -24,7 +27,11 @@ module.exports = async function serviceList(scope = undefined) {
           desc: service.label.desc,
           scope: service.label.scope,
           image: service.image,
-          endpoints: []
+          endpoints: [],
+          sub_services: {
+            diarization: [],
+            punctuation: []
+          }
         }
         for (const endpoint in service.label.endpoints) {
           let endpointData = { endpoint: endpoint }
@@ -39,14 +46,30 @@ module.exports = async function serviceList(scope = undefined) {
         }
 
         if (service.stack.image.includes('linto-platform-transcription-service')) {
-          if (service.container.env) {
-            serviceData.lang = service.container.env.LANGUAGE
-            serviceData.model_quality = service.container.env.MODEL_QUALITY
-            serviceData.accoustic = service.container.env.ACCOUSTIC
+          const serviceInspect = await docker.getService(service.id).inspect()
+          if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Env) {
+            const dockerEnv = service.extractEnv(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env, ['LANGUAGE', 'MODEL_QUALITY', 'ACCOUSTIC'])
+            serviceData = { ...serviceData, ...dockerEnv }
           }
 
           await axios.get(service.host + '/list-services').then(function (response) {
-            serviceData.sub_services = response.data
+            if (response.data.diarization.length > 0) {
+              for (let diarization of response.data.diarization) {
+                try {
+                  if (diarization.info) diarization.info = JSON.parse(diarization.info)
+                } catch (err) { }
+                serviceData.sub_services.diarization.push(diarization)
+              }
+            }
+            if (response.data.punctuation.length > 0) {
+              for (let punctuation of response.data.punctuation) {
+                try {
+                  if (punctuation.info) punctuation.info = JSON.parse(punctuation.info)
+                } catch (err) { }
+                serviceData.sub_services.punctuation.push(punctuation)
+              }
+            }
+
 
           }).catch(function (error) {
             console.log(error)
@@ -65,3 +88,4 @@ module.exports = async function serviceList(scope = undefined) {
   }
   return listServices
 }
+
