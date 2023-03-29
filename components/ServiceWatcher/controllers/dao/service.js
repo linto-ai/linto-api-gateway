@@ -4,14 +4,17 @@ const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWat
 
 class Service {
   constructor(serviceName, serviceInspect) {
+
     this.label = {
       enabled: false
     }
     this.stack = {}
     this.name = serviceName
-    this.id = serviceInspect.ID
 
-    if (serviceInspect) this.setMetadata(serviceInspect)
+    if (serviceInspect) {
+      this.id = serviceInspect.ID
+      this.setMetadata(serviceInspect)
+    }
   }
 
   setMetadata(serviceInspect) {
