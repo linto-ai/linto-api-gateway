@@ -32,7 +32,10 @@ class Component extends EventEmitter {
                     await this.loadEventControllers(itemPath)
                 } else if (item.toLocaleLowerCase().indexOf('.js')) {
                     let controller = require(itemPath)
-                    if (typeof controller === "function") controller.call(this)
+                    if (typeof controller === "function") {
+                        // We don't want to call these specific files
+                        if (itemPath.indexOf('ServiceWatcher/controllers/lib') === -1) controller.call(this)
+                    }
                 }
             }
         } catch (e) {
