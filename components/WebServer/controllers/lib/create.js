@@ -17,20 +17,19 @@ async function create(serviceToStart) {
 
       let proxy = httpProxy.createProxyServer({})
 
-      proxy.on('error', function(err) {
+      proxy.on('error', function (err) {
         console.error(err)
       })
 
       debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName} with host ${serviceHost}`)
 
       this.express.use(endpointPath, async (req, res, next) => {
-        // Execute middleware
         req.payload = { ...routeConfig.middlewareConfig }
         await middlewareExec(loadedMiddleware, req, res, undefined)
 
-        // Proxy request
-        proxy.web(req, res, { target: serviceHost })
-
+        proxy.web(req, res, { target: serviceHost }, function (err) {
+          debug(err)
+        })
       })
     })
 
