@@ -65,7 +65,7 @@ class Service {
 
   setupMiddlewareSettings(stackLabel) {
     let endpoints = {}
-    stackLabel['linto.gateway.endpoints'].split(',').map(endpoint => {
+    stackLabel['linto.gateway.endpoints'].split(',').filter(endpoint => endpoint !== '').map(endpoint => {
       const keyName = endpoint
 
       endpoints[keyName] = { middlewares: [], middlewareConfig: {} }
