@@ -55,7 +55,7 @@ module.exports = async function serviceList(scope = undefined) {
 
           if (serviceInspect) {
             if (serviceInspect?.Spec?.TaskTemplate?.ContainerSpec?.Env) {
-              const dockerEnv = service.extractEnv(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env, ['LANGUAGE', 'MODEL_QUALITY', 'ACCOUSTIC'])
+              const dockerEnv = service.extractEnv(serviceInspect.Spec.TaskTemplate.ContainerSpec.Env, ['LANGUAGE', 'MODEL_QUALITY', 'ACCOUSTIC', 'MODEL_TYPE'])
               serviceData = { ...serviceData, ...dockerEnv }
             }
 
