@@ -35,6 +35,8 @@ class Component extends EventEmitter {
                     if (typeof controller === "function") {
                         // We don't want to call these specific files
                         if (itemPath.indexOf('ServiceWatcher/controllers/lib') === -1) controller.call(this)
+                        if (itemPath.indexOf('ApiWatcher/controllers/lib') === -1) controller.call(this)
+
                     }
                 }
             }
