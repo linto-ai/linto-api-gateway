@@ -6,17 +6,17 @@ module.exports = async function availableService() {
     for (const [serviceType, services] of Object.entries(this.servicesLoaded)) {
       for (const service of services) {
         try {
-          const response = await axios.get(service.host)
-          //TODO:
-          console.log(`Service ${serviceType} at ${service.host} is available: ${response.status}`)
+          let ping = service.host
+          if (service.healthcheck) ping = service.healthcheck
+
+          await axios.get(ping) // axios will throw an error if the service is not available
+
         } catch (error) {
           this.emit(`api-remove`, serviceType, service)
-
           console.error(`Service ${serviceType} at ${service.host} is not available: ${error.message}`)
         }
       }
     }
-    return true
   } catch (err) {
     console.error(err)
   }

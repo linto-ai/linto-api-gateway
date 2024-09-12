@@ -14,7 +14,7 @@ class Ctl {
                 return prev.then(async () => { await this.use(componentFolderName) })
             }, Promise.resolve()).then(async () => {
                 // Do some stuff after all components being loaded
-                if(this.components['ServiceWatcher'] !== undefined && this.components['WebServer'] !== undefined) {
+                if (this.components['ServiceWatcher'] !== undefined && this.components['WebServer'] !== undefined) {
                     await this.components['ServiceWatcher'].discovery()
                 }
             })
@@ -30,7 +30,6 @@ class Ctl {
             // Component dependency injections with inversion of control based on events emitted between components
             // Component is an async singleton - requiring it returns a reference to an instance
             const component = await require(`${__dirname}/components/${componentFolderName}`)(this)
-            debug(component.id)
             this.components[component.id] = component // We register the instancied component reference in app.components object
             spinner.succeed(`Registered component : ${component.id}`)
         } catch (e) {
