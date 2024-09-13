@@ -1,9 +1,10 @@
-const debug = require('debug')('saas-api-gateway:components:api-watcher:controllers:lib:api-list')
+const debug = require('debug')('saas-api-gateway:components:api-watcher:controllers:event:api-list')
 const axios = require('axios')
+const lib = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/index.js`)
 
 module.exports = async function serviceList(scope = undefined) {
-  let services = Object.assign({}, this.servicesLoaded)
-  services.transcription = await generateTranscriptionService(this.servicesLoaded.transcription)
+  let services = await lib.list()
+  services.transcription = await generateTranscriptionService(services.transcription)
 
   if (scope) {
     for (const [serviceType, serviceList] of Object.entries(services)) {

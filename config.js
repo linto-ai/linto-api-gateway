@@ -3,13 +3,13 @@ const dotenv = require('dotenv')
 const fs = require('fs')
 
 function ifHasNotThrow(element, error) {
-    if (!element) throw error
-    return element
+	if (!element) throw error
+	return element
 }
 
 function ifHas(element, defaultValue) {
-    if (!element) return defaultValue
-    return element
+	if (!element) return defaultValue
+	return element
 }
 
 function configureDefaults() {
@@ -20,6 +20,7 @@ function configureDefaults() {
 		process.env.COMPONENTS = ifHas(process.env.COMPONENTS, envdefault.COMPONENTS)
 		process.env.EXPRESS_SIZE_FILE_MAX = ifHas(process.env.EXPRESS_SIZE_FILE_MAX, envdefault.EXPRESS_SIZE_FILE_MAX)
 
+		process.env.SQLITE_DB_MODE = ifHas(process.env.SQLITE_DB_MODE, envdefault.SQLITE_DB_MODE)
 	} catch (e) {
 		console.error(e)
 		process.exit(1)

@@ -1,9 +1,13 @@
-const debug = require('debug')('saas-api-gateway:components:api-watcher:controllers:lib:api-available')
+const debug = require('debug')('saas-api-gateway:components:api-watcher:controllers:event:api-available')
 const axios = require('axios')
+const lib = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/index.js`)
+
 
 module.exports = async function availableService() {
   try {
-    for (const [serviceType, services] of Object.entries(this.servicesLoaded)) {
+    let servicesLoaded = await lib.list()
+
+    for (const [serviceType, services] of Object.entries(servicesLoaded)) {
       for (const service of services) {
         try {
           let ping = service.host

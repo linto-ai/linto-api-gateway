@@ -1,11 +1,7 @@
-const available = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/api-available`)
-const list = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/api-list`)
-const remove = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/api-remove`)
-const registry = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/api-registry`)
+const loadedService = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/list-service`)
+const existingService = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/existing-service`)
 
 module.exports = {
-    available: available,
-    list: list,
-    remove: remove,
-    registry: registry,
+    list: loadedService,
+    existing: existingService
 }
