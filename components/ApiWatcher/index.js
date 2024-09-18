@@ -1,7 +1,7 @@
 const Component = require(`../component.js`)
 const debug = require('debug')(`saas-api-gateway:components:api-watcher`)
 const event = require(`${process.cwd()}/components/ApiWatcher/controllers/event/index.js`)
-const MINUTE = 0.25
+const MINUTE = 5
 
 class ApiWatcher extends Component {
     constructor(app) {

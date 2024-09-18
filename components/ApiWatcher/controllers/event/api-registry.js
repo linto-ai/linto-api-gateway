@@ -20,7 +20,6 @@ module.exports = async function registryService(type, service) {
         this.emit(`api-create`, type, service)
         return service
     } catch (err) {
-        debug('Service not available')
         throw new Error('Service not available')
     }
 }
