@@ -8,8 +8,8 @@ async function list(req, res, next) {
     if (!ServiceWatcher && !ApiWatcher) return res.status(404).send('ServiceWatcher component not properly loaded')
 
     let services = await getServiceList(req, ServiceWatcher, ApiWatcher)
-    if (req.query.flat === "false") res.status(200).send(services)
-    else res.status(200).send(flattenServices(services))
+    if (req.query.flat === "true") res.status(200).send(flattenServices(services))
+    else res.status(200).send(services)
 
   } catch (err) {
     next(err)
