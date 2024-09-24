@@ -1,11 +1,9 @@
 const debug = require('debug')('saas-api-gateway:components:webserver:controllers:routes:remove')
 
-
 async function remove(service) {
   try {
     let routes = this.express._router.stack
-    if (service?.label?.endpoints)
-      return
+    if (!service?.label?.endpoints) return
 
     Object.keys(service.label.endpoints).map(endpoint => {
       routes.forEach((route, i, routes) => {

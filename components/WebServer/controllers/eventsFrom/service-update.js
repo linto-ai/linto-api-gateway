@@ -1,9 +1,10 @@
 const debug = require('debug')('saas-api-gateway:components:webserver:controllers:eventsFrom:ServiceWatcher:service-update')
 
 const { createRoute, removeRoute } = require(`${process.cwd()}/components/WebServer/controllers/lib/`)
-
+let isRegistered = false
 
 module.exports = async function () {
+  if (isRegistered) return
   if (!this.app.components['ServiceWatcher']) return
 
   this.app.components['ServiceWatcher'].on('service-update', async (serviceUpdated) => {
@@ -15,4 +16,6 @@ module.exports = async function () {
     createRoute.call(this, serviceUpdated)
     this.app.components['ServiceWatcher'].servicesLoaded[serviceUpdated.name] = serviceUpdated
   })
+
+  isRegistered = true
 }
