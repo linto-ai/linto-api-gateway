@@ -2,7 +2,7 @@
   "/gateway/services": {
     "get": {
       "tags": ["services"],
-      "summary": "Get all runing",
+      "summary": "List all registered services",
       "parameters": [
         {
           "name": "flat",
@@ -38,7 +38,7 @@
     },
     "delete": {
       "tags": ["services"],
-      "summary": "Delete a service",
+      "summary": "Delete a registered service",
       "description": "This endpoint allows the deletion of a service by its serviceName.",
       "parameters": [
         {
@@ -65,8 +65,8 @@
     },
     "post": {
       "tags": ["services"],
-      "summary": "Add a new service",
-      "description": "This endpoint allows the creation of a new service.",
+      "summary": "Register a new service",
+      "description": "This endpoint allows the registration of a new service.",
       "requestBody": {
         "required": true,
         "content": {
@@ -124,7 +124,7 @@
   "/gateway/services/{scope}": {
     "get": {
       "tags": ["services"],
-      "summary": "Get all runing ",
+      "summary": "List all registered services",
       "parameters": [
         {
           "name": "scope",

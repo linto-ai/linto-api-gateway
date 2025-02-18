@@ -3,7 +3,7 @@ const swaggerDocument = require('./swagger/swagger.json');
 const swaggerJsdoc = require("swagger-jsdoc")
 
 const gatewayBasePath = process.env.SAAS_API_GATEWAY_BASEPATH || ''
-const host = process.env.SAAS_API_GATEWAY_HOST || 'http://localhost'
+const host = process.env.SWAGGER_HOST || 'http://localhost'
 function forwardedPrefixMiddleware(req, res, next) {
     req.originalUrl = (req.headers['x-forwarded-prefix'] || '') + req.originalUrl
     next()
