@@ -10,10 +10,11 @@ class ApiWatcher extends Component {
         this.id = this.constructor.name
 
         // Bind event methods
-        const { available, list, registry } = event
+        const { available, list, registry, remove } = event
         this.available = available.bind(this)
         this.list = list.bind(this)
         this.registry = registry.bind(this)
+        this.remove = remove.bind(this)
 
         this.availableService()
         return this

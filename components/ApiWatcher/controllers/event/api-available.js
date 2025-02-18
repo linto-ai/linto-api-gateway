@@ -2,18 +2,17 @@ const debug = require('debug')('saas-api-gateway:components:api-watcher:controll
 const axios = require('axios')
 const lib = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/index.js`)
 
+const HEALTHCHECK_TIMEOUT = 60000
 
 module.exports = async function availableService() {
   try {
     let servicesLoaded = await lib.list()
-
     for (const [serviceType, services] of Object.entries(servicesLoaded)) {
       for (const service of services) {
         try {
           let ping = service.host
           if (service.healthcheck) ping = service.healthcheck
-
-          await axios.get(ping) // axios will throw an error if the service is not available
+          await axios.get(ping, { timeout: HEALTHCHECK_TIMEOUT })
 
         } catch (error) {
           this.emit(`api-remove`, serviceType, service)
