@@ -7,6 +7,10 @@ The api-gateway is a service designed to manage and route API requests to variou
 - Flexible API Integration: Provides a RESTful API for adding new service proxies, allowing for easy integration of additional services with just a JSON payload.
 - Scoped Routing: Supports scoping to manage and segregate service visibility and access, facilitating better organization and control over service interactions.
 
+## Swagger
+
+Defaut swagger url can be reach at : http://localhost/api-docs
+
 ## Registry Service by API
 
 ### 1. **Overview**

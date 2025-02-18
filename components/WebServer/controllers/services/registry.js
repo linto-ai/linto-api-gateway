@@ -12,7 +12,8 @@ async function registry(req, res, next) {
             res.status(404).send('ApiWatcher component not properly loaded')
         } else {
             let result = await this.app.components['ApiWatcher'].registry(type, req.body)
-            res.status(201).send(result)
+            if (!result) res.status(304).send()
+            else res.status(201).send(result)
         }
     } catch (err) {
         next(err)

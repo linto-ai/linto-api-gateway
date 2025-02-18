@@ -1,5 +1,7 @@
 # Saas api settings
+SAAS_API_GATEWAY_HOST=http://localhost
 SAAS_API_GATEWAY_HTTP_PORT=80
+
 
 COMPONENTS=ServiceWatcher,ApiWatcher,WebServer
 SQLITE_DB_MODE=memory

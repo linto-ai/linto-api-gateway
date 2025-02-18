@@ -1,0 +1,133 @@
+{
+  "ServiceCreateRequest": {
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "If the service is enabled."
+          },
+          "endpoints": {
+            "type": "object",
+            "properties": {
+              "/stt-api": {
+                "type": "object",
+                "properties": {
+                  "middlewares": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "The list of middlewares applied to the endpoint."
+                    }
+                  },
+                  "middlewareConfig": {
+                    "type": "object",
+                    "properties": {
+                      "auths": {
+                        "type": "object",
+                        "properties": {
+                          "paramAuth1": {
+                            "type": "string",
+                            "description": "Auth parameter."
+                          }
+                        }
+                      },
+                      "logs": {
+                        "type": "object",
+                        "properties": {
+                          "paramLog1": {
+                            "type": "string",
+                            "description": "Log parameter."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "port": {
+            "type": "integer",
+            "description": "The port on which the service will be available."
+          },
+          "desc": {
+            "type": "object",
+            "properties": {
+              "en": {
+                "type": "string",
+                "description": "Description in English."
+              },
+              "fr": {
+                "type": "string",
+                "description": "Description in French."
+              }
+            }
+          }
+        }
+      },
+      "name": {
+        "type": "string",
+        "description": "The name of the service."
+      },
+      "serviceName": {
+        "type": "string",
+        "description": "The internal service name."
+      },
+      "host": {
+        "type": "string",
+        "description": "The URL of the service."
+      },
+      "healthcheck": {
+        "type": "string",
+        "description": "The health check URL for the service."
+      },
+      "accoustic": {
+        "type": "string",
+        "nullable": true,
+        "description": "The acoustic model version (nullable)."
+      },
+      "language": {
+        "type": "string",
+        "description": "The language of the service."
+      },
+      "model_quality": {
+        "type": "string",
+        "nullable": true,
+        "description": "The quality of the model (nullable)."
+      },
+      "model_type": {
+        "type": "string",
+        "nullable": true,
+        "description": "The type of model used (nullable)."
+      }
+    },
+    "required": ["name", "serviceName", "host", "healthcheck", "label"],
+    "example": {
+      "label": {
+        "enabled": true,
+        "endpoints": {
+          "/stt-api": {
+            "middlewares": ["logs", "auths"],
+            "middlewareConfig": {
+              "auths": { "paramAuth1": "valueAuth1" },
+              "logs": { "paramLog1": "valueLog1" }
+            }
+          }
+        },
+        "port": 5050,
+        "desc": { "en": "english", "fr": "frenchi" }
+      },
+      "name": "stt-api",
+      "serviceName": "stt-api",
+      "host": "https://services_to_proxy/",
+      "healthcheck": "https://services_to_proxy/healthcheck",
+      "accoustic": "1",
+      "language": "fr-FR",
+      "model_quality": "1",
+      "model_type": "whisper"
+    }
+  }
+}

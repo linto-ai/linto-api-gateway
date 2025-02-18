@@ -1,0 +1,118 @@
+{
+  "ServiceList": {
+    "type": "object",
+    "properties": {
+      "transcription": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Service"
+        },
+        "description": "List of transcription services."
+      },
+      "nlp": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "List of NLP services."
+        },
+        "description": "List of NLP services."
+      },
+      "tts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "List of TTS services."
+        },
+        "description": "List of TTS services."
+      },
+      "services": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Service"
+        },
+        "description": "List of general services."
+      }
+    },
+    "example": {
+      "transcription": [
+        {
+          "name": "stt-api",
+          "serviceName": "stt-api",
+          "online": true,
+          "desc": {
+            "en": "english",
+            "fr": "frenchi"
+          },
+          "scope": ["cm", "api", "stt"],
+          "endpoints": [
+            {
+              "endpoint": "/stt-api",
+              "middlewares": ["logs", "auths"]
+            }
+          ],
+          "sub_services": {
+            "diarization": [
+              {
+                "info": {
+                  "en": "Yes",
+                  "fr": "Oui"
+                },
+                "instances": [
+                  {
+                    "concurrency": 1,
+                    "host_name": "ff471ff21b92",
+                    "last_alive": 1739889258,
+                    "version": "unknown"
+                  }
+                ],
+                "queue_name": "diarization",
+                "service_language": "*",
+                "service_name": "stt-diarization",
+                "service_type": "diarization"
+              }
+            ],
+            "punctuation": []
+          },
+          "accoustic": "1",
+          "language": "fr-FR",
+          "model_quality": "1",
+          "model_type": "whisper"
+        }
+      ],
+      "nlp": [],
+      "tts": [],
+      "services": [
+        {
+          "id": 8,
+          "name": "ServiceName",
+          "serviceName": "ServiceName",
+          "host": "http://localhost:8001",
+          "healthcheck": "http://localhost:8001/healthcheck",
+          "label": {
+            "enabled": true,
+            "endpoints": {
+              "/endpoint": {
+                "middlewares": ["logs", "auths"],
+                "middlewareConfig": {
+                  "auths": {
+                    "paramAuth1": "valueAuth1"
+                  },
+                  "logs": {
+                    "paramLog1": "valueLog1"
+                  }
+                }
+              }
+            },
+            "port": 5050,
+            "desc": "undefined"
+          },
+          "type": "services",
+          "accoustic": null,
+          "model_quality": null,
+          "model_type": null,
+          "language": null
+        }
+      ]
+    }
+  }
+}

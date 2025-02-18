@@ -1,0 +1,79 @@
+{
+  "ServiceTranscription": {
+    "type": "object",
+    "properties": {
+      "service_name": {
+        "type": "string",
+        "description": "The name of the service."
+      },
+      "service_type": {
+        "type": "string",
+        "description": "The type of the service (punctuation || diarization)."
+      },
+      "service_language": {
+        "type": "string",
+        "description": "The language of the service."
+      },
+      "queue_name": {
+        "type": "string",
+        "description": "The name of the queue."
+      },
+      "info": {
+        "type": "object",
+        "properties": {
+          "en": {
+            "type": "string",
+            "description": "Information about the service in English."
+          },
+          "fr": {
+            "type": "string",
+            "description": "Information about the service in French."
+          }
+        }
+      },
+      "instances": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "host_name": {
+              "type": "string",
+              "description": "The name of the host."
+            },
+            "last_alive": {
+              "type": "integer",
+              "description": "The last alive time of the instance."
+            },
+            "version": {
+              "type": "string",
+              "description": "The version of the instance."
+            },
+            "concurrency": {
+              "type": "integer",
+              "description": "The concurrency of the instance."
+            }
+          }
+        },
+        "description": "The instances of the service."
+      }
+    },
+    "example": {
+      "service_name": "stt-diarization-pyannote",
+      "service_type": "diarization",
+      "service_language": "*",
+      "queue_name": "diarization-pyannote",
+      "info": {
+        "en": "Yes",
+        "fr": "Oui"
+      },
+      "instances": [
+        {
+          "host_name": "ff471ff21b92",
+          "last_alive": 1739889258,
+          "version": "unknown",
+          "concurrency": 1
+        }
+      ]
+    }
+  }
+}
