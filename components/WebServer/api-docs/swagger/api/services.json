@@ -1,0 +1,152 @@
+{
+  "/gateway/services": {
+    "get": {
+      "tags": ["services"],
+      "summary": "List all registered services",
+      "parameters": [
+        {
+          "name": "flat",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Change the ouput result"
+          }
+        },
+        {
+          "name": "query",
+          "in": "scope",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Display only the service with the requested scope"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "The list of services",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceList"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "tags": ["services"],
+      "summary": "Delete a registered service",
+      "description": "This endpoint allows the deletion of a service by its serviceName.",
+      "parameters": [
+        {
+          "name": "serviceName",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "The name of the service to be deleted."
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Service deleted successfully."
+        },
+        "304": {
+          "description": "Nothing change"
+        },
+        "404": {
+          "description": "Service not found."
+        }
+      }
+    },
+    "post": {
+      "tags": ["services"],
+      "summary": "Register a new service",
+      "description": "This endpoint allows the registration of a new service.",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ServiceCreateRequest"
+            },
+            "example": {
+              "label": {
+                "enabled": true,
+                "endpoints": {
+                  "/stt-api": {
+                    "middlewares": ["logs", "auths"],
+                    "middlewareConfig": {
+                      "auths": { "paramAuth1": "valueAuth1" },
+                      "logs": { "paramLog1": "valueLog1" }
+                    }
+                  }
+                },
+                "port": 5050,
+                "desc": { "en": "english", "fr": "frenchi" }
+              },
+              "name": "stt-api",
+              "serviceName": "stt-api",
+              "host": "https://services_to_proxy/",
+              "healthcheck": "https://services_to_proxy/healthcheck",
+              "accoustic": "1",
+              "language": "fr-FR",
+              "model_quality": "1",
+              "model_type": "whisper"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Service created successfully.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              }
+            }
+          }
+        },
+        "304": {
+          "description": "Nothing change"
+        },
+        "400": {
+          "description": "Invalid input."
+        }
+      }
+    }
+  },
+  "/gateway/services/{scope}": {
+    "get": {
+      "tags": ["services"],
+      "summary": "List all registered services",
+      "parameters": [
+        {
+          "name": "scope",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "The list of services",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Services"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

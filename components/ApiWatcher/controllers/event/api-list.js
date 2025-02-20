@@ -6,6 +6,13 @@ module.exports = async function serviceList(scope = undefined) {
   let services = await lib.list()
   services.transcription = await generateTranscriptionService(services.transcription)
 
+  services.transcription.filter(service => !service.online)
+    .forEach(service => {
+      this.emit(`api-remove`, service.type, service)
+    })
+
+  services.transcription = services.transcription.filter(service => service.online)
+
   if (scope) {
     for (const [serviceType, serviceList] of Object.entries(services)) {
       services[serviceType] = serviceList.filter(service => service.scope && service.scope.includes(scope))
@@ -21,6 +28,7 @@ async function generateTranscriptionService(transcription) {
       let serviceData = {
         name: service.name,
         serviceName: service.serviceName,
+        online: true,
         desc: service.label.desc,
         scope: service.label.scope || ["cm", "api", "stt"],
         image: service.image,
@@ -67,9 +75,8 @@ async function generateTranscriptionService(transcription) {
 
 
       }).catch(function (error) {
-        console.log(error)
+        serviceData.online = false
       })
-
       transcriptionService.push(serviceData)
     }
   }
