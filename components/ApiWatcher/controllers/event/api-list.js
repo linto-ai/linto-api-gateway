@@ -45,8 +45,7 @@ async function generateTranscriptionService(transcription) {
 
       for (const endpoint in service.label.endpoints) {
         let endpointData = { endpoint: endpoint }
-
-        if (service.label.endpoints[endpoint].middlewares.length > 0) {
+        if (service.label.endpoints[endpoint]?.middlewares?.length > 0) {
           endpointData.middlewares = service.label.endpoints[endpoint].middlewares
           if (endpointData.middlewares.indexOf('billing') !== -1) {
             endpointData.billing = service.label.endpoints[endpoint].middlewareConfig.billing
