@@ -1,7 +1,7 @@
 const Component = require(`../component.js`)
 const debug = require('debug')(`saas-api-gateway:components:api-watcher`)
 const event = require(`${process.cwd()}/components/ApiWatcher/controllers/event/index.js`)
-const MINUTE = 5
+const TIMER_MINUTE = parseFloat(process.env.ALIVE_TIMER_SERVICE) || 5 // If NaN, the value will be setup at 5 minute per default
 
 class ApiWatcher extends Component {
     constructor(app) {
@@ -21,7 +21,7 @@ class ApiWatcher extends Component {
     }
 
     availableService() {
-        setInterval(() => this.available(), MINUTE * 60 * 1000) // Run every x minutes
+        setInterval(() => this.available(), TIMER_MINUTE * 60 * 1000) // Run every x minutes
     }
 }
 

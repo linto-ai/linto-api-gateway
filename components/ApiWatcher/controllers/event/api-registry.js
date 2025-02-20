@@ -19,8 +19,15 @@ module.exports = async function registryService(type, service) {
         if (!service) return false
         if (!service?.name) throw new Error('Service name not provided')
 
-        let exist = await lib.existing(service.serviceName)
+        const exist = await lib.existing(service.serviceName)
         if (exist) return false // We don't create, service already exist
+
+        const endpoints = Object.keys(service.label.endpoints)
+        for (const endpoint of endpoints) {
+            let available = await lib.availableEndpoint(endpoint)
+            if (available.length > 0) return false // The desired endpoint is already define
+        }
+
 
         let ping = service.host
         if (service.healthcheck) ping = service.healthcheck

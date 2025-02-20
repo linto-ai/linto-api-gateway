@@ -39,6 +39,10 @@ async function create(serviceToStart) {
 }
 
 function loadMiddleware(middlewaresList) {
+  if (!middlewaresList || middlewaresList.length === 0) { // Service don't have a mandatory middleware loaded
+    return []
+  }
+
   const middlewares = middlewaresList.map(middleware => {
     if (webserver_middlewares[middleware]) {
       return webserver_middlewares[middleware]

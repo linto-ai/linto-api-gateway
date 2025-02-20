@@ -8,3 +8,4 @@ SQLITE_DB_MODE=memory
 
 
 EXPRESS_SIZE_FILE_MAX=500mb
+ALIVE_TIMER_SERVICE=5 // Value is in minutes
