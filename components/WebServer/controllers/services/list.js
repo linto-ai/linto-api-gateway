@@ -28,7 +28,13 @@ async function getServiceList(req, ServiceWatcher, ApiWatcher) {
   }
 
   // Merge service and API lists if both exist, otherwise return the existing one
-  return ServiceWatcher && ApiWatcher ? mergeServiceAndApi(serviceList, apiList) : serviceList || apiList
+  if (ServiceWatcher && ApiWatcher) {
+    return mergeServiceAndApi(serviceList, apiList)
+  }
+  if (serviceList && serviceList.length > 0) {
+    return serviceList;
+  }
+  return apiList;
 }
 
 // Merges service and API lists
