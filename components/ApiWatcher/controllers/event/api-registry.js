@@ -10,7 +10,7 @@ async function pingServiceWithTimeout(url, retries = 5, delay = 5000, timeout = 
         if (retries === 0) throw err
 
         await new Promise(resolve => setTimeout(resolve, delay))
-        return pingServiceWithTimeout(url, retries - 1, delay * 2, timeout) // Exponentially increase the delay
+        return pingServiceWithTimeout(url, retries - 1, delay, timeout)
     }
 }
 
@@ -20,7 +20,7 @@ module.exports = async function registryService(type, service) {
         if (!service?.name) throw new Error('Service name not provided')
 
         const exist = await lib.existing(service.serviceName)
-        if (exist) return false // We don't create, service already exist
+        if (exist) return false // We don't register the service it's already exist
 
         const endpoints = Object.keys(service.label.endpoints)
         for (const endpoint of endpoints) {
@@ -28,14 +28,22 @@ module.exports = async function registryService(type, service) {
             if (available.length > 0) return false // The desired endpoint is already define
         }
 
-
         let ping = service.host
         if (service.healthcheck) ping = service.healthcheck
 
         // Check if service is running with a retry up to 150s
-        await pingServiceWithTimeout(ping)
+        if (service.healthcheck) ping = service.healthcheck
 
-        this.emit(`api-create`, type, service)
+        // Non-blocking ping
+        pingServiceWithTimeout(ping)
+            .then(() => {
+                this.emit(`api-create`, type, service) // Register service only if ping succeeds, otherwise nothing
+            })
+            .catch(err => {
+                // We do nothing, api have already responded
+                debug(`Service not available`)
+            })
+
         return service
     } catch (err) {
         debug(`Error: ${err.message}`)
