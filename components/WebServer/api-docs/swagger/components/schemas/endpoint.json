@@ -1,0 +1,23 @@
+{
+  "Endpoint": {
+    "type": "object",
+    "properties": {
+      "endpoint": {
+        "type": "string",
+        "description": "The API endpoint path."
+      },
+      "middlewares": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "The list of middlewares applied to the endpoint."
+        },
+        "description": "Middlewares to be applied on the endpoint."
+      }
+    },
+    "example": {
+      "endpoint": "/stt-api",
+      "middlewares": ["logs", "auths"]
+    }
+  }
+}

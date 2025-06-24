@@ -1,0 +1,32 @@
+{
+  "/gateway/healthcheck": {
+    "get": {
+      "tags": ["health"],
+      "summary": "Health check endpoint",
+      "description": "This endpoint checks if the service is up and running.",
+      "operationId": "healthCheck",
+      "responses": {
+        "200": {
+          "description": "Service is healthy.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["ok"],
+                    "description": "Status of the service."
+                  }
+                },
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

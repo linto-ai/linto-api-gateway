@@ -1,0 +1,138 @@
+{
+  "Service": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "The unique ID of the service."
+      },
+      "name": {
+        "type": "string",
+        "description": "The name of the service."
+      },
+      "serviceName": {
+        "type": "string",
+        "description": "The internal service name."
+      },
+      "host": {
+        "type": "string",
+        "description": "The host URL of the service."
+      },
+      "healthcheck": {
+        "type": "string",
+        "description": "The health check endpoint for the service."
+      },
+      "label": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "If the service is enabled."
+          },
+          "endpoints": {
+            "type": "object",
+            "properties": {
+              "/cm-api": {
+                "type": "object",
+                "properties": {
+                  "middlewares": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "List of middlewares for the endpoint."
+                    }
+                  },
+                  "middlewareConfig": {
+                    "type": "object",
+                    "properties": {
+                      "auths": {
+                        "type": "object",
+                        "properties": {
+                          "paramAuth1": {
+                            "type": "string",
+                            "description": "Auth parameter 1."
+                          }
+                        }
+                      },
+                      "logs": {
+                        "type": "object",
+                        "properties": {
+                          "paramLog1": {
+                            "type": "string",
+                            "description": "Log parameter 1."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "port": {
+            "type": "integer",
+            "description": "The port on which the service is running."
+          },
+          "desc": {
+            "type": "string",
+            "description": "A description of the service."
+          }
+        }
+      },
+      "type": {
+        "type": "string",
+        "description": "The type of service."
+      },
+      "accoustic": {
+        "type": "string",
+        "nullable": true,
+        "description": "The acoustic model version (nullable)."
+      },
+      "model_quality": {
+        "type": "string",
+        "nullable": true,
+        "description": "The quality of the model (nullable)."
+      },
+      "model_type": {
+        "type": "string",
+        "nullable": true,
+        "description": "The type of model used (nullable)."
+      },
+      "language": {
+        "type": "string",
+        "nullable": true,
+        "description": "The language of the service (nullable)."
+      }
+    },
+    "example": {
+      "id": 8,
+      "name": "ServiceName",
+      "serviceName": "ServiceName",
+      "host": "http://localhost:8001",
+      "healthcheck": "http://localhost:8001/healthcheck",
+      "label": {
+        "enabled": true,
+        "endpoints": {
+          "/endpoint": {
+            "middlewares": ["logs", "auths"],
+            "middlewareConfig": {
+              "auths": {
+                "paramAuth1": "valueAuth1"
+              },
+              "logs": {
+                "paramLog1": "valueLog1"
+              }
+            }
+          }
+        },
+        "port": 5050,
+        "desc": "undefined"
+      },
+      "type": "services",
+      "accoustic": null,
+      "model_quality": null,
+      "model_type": null,
+      "language": null
+    }
+  }
+}

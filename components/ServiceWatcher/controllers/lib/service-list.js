@@ -44,7 +44,9 @@ module.exports = async function serviceList(scope = undefined) {
           serviceData.endpoints.push(endpointData)
         }
 
-        if (service.stack.image.includes('linto-platform-transcription-service')) {
+        if (service.stack.image.includes('linto-transcription-service') ||
+          service.stack.image.includes('linto-platform-transcription-service')
+        ) {
 
           let serviceInspect // Depending of the loading of the service the service id is not always available
           if (service?.id) serviceInspect = await docker.getService(service.id).inspect()

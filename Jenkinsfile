@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_REPO = "saas/linto-platform-api-gateway"
-        DOCKER_HUB_CRED = 'harbor-jenkins-robot'
+        DOCKER_HUB_REPO = "lintoai/linto-api-gateway"
+        DOCKER_HUB_CRED = 'docker-hub-credentials'
         VERSION = ''
     }
 
@@ -20,7 +20,7 @@ pipeline {
                         script: "awk -v RS='' '/#/ {print; exit}' RELEASE.md | head -1 | sed 's/#//' | sed 's/ //'"
                     ).trim()
 
-                    docker.withRegistry('https://registry.linto.ai', env.DOCKER_HUB_CRED) {
+                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CRED) {
                         image.push("${VERSION}")
                         image.push('latest')
                     }
@@ -37,7 +37,7 @@ pipeline {
                 script {
                     image = docker.build(env.DOCKER_HUB_REPO)
 
-                    docker.withRegistry('https://registry.linto.ai', env.DOCKER_HUB_CRED) {
+                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CRED) {
                         image.push('latest-unstable')
                     }
                 }

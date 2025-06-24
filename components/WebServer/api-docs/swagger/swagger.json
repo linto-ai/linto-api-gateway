@@ -1,0 +1,32 @@
+{
+  "definition": {
+    "openapi": "3.0.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "API gateway",
+      "description": "Use api-gateway, add new service for the listing",
+      "contact": {
+        "name": "LINAGORA",
+        "url": "http://linto.ai",
+        "email": "contact@linto.ai"
+      }
+    },
+    "schemes": [],
+    "servers": [],
+    "paths": {},
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ]
+  }
+}

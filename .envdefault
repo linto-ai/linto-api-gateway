@@ -1,6 +1,11 @@
 # Saas api settings
+SWAGGER_HOST=http://localhost
 SAAS_API_GATEWAY_HTTP_PORT=80
 
-COMPONENTS=ServiceWatcher,WebServer
+
+COMPONENTS=ServiceWatcher,ApiWatcher,WebServer
+SQLITE_DB_MODE=memory
+
 
 EXPRESS_SIZE_FILE_MAX=500mb
+ALIVE_TIMER_SERVICE=5 // Value is in minutes
