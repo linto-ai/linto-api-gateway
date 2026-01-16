@@ -1,6 +1,7 @@
 const debug = require('debug')('saas-api-gateway:components:api-watcher:controllers:event:api-list')
 const axios = require('axios')
 const lib = require(`${process.cwd()}/components/ApiWatcher/controllers/lib/index.js`)
+const SECURITY_LEVEL = require(`${process.cwd()}/lib/securityLevel.js`)
 
 module.exports = async function serviceList(scope = undefined) {
   let services = await lib.list()
@@ -28,6 +29,7 @@ async function generateTranscriptionService(transcription) {
       let serviceData = {
         name: service.name,
         serviceName: service.serviceName,
+        security_level: service.security_level || SECURITY_LEVEL.DEFAULT,
         online: true,
         desc: service.label.desc,
         scope: service.label.scope || ["cm", "api", "stt"],
