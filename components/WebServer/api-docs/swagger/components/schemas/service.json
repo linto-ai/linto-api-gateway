@@ -84,10 +84,11 @@
         "description": "The type of service."
       },
       "security_level": {
-        "type": "string",
-        "enum": ["secure", "sensitive", "insecure"],
-        "default": "insecure",
-        "description": "The security level of the service."
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 3,
+        "default": 0,
+        "description": "The security level of the service (0 = lowest, 3 = highest)."
       },
       "accoustic": {
         "type": "string",
@@ -135,7 +136,7 @@
         "desc": "undefined"
       },
       "type": "services",
-      "security_level": "insecure",
+      "security_level": 0,
       "accoustic": null,
       "model_quality": null,
       "model_type": null,

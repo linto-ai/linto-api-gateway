@@ -104,10 +104,11 @@
         "description": "The type of model used (nullable)."
       },
       "security_level": {
-        "type": "string",
-        "enum": ["secure", "sensitive", "insecure"],
-        "default": "insecure",
-        "description": "The security level of the service. Defaults to 'insecure' if not provided."
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 3,
+        "default": 0,
+        "description": "The security level of the service (0 = lowest, 3 = highest). Defaults to 0 if not provided."
       }
     },
     "required": ["name", "serviceName", "host", "healthcheck", "label"],
@@ -134,7 +135,7 @@
       "language": "fr-FR",
       "model_quality": "1",
       "model_type": "whisper",
-      "security_level": "sensitive"
+      "security_level": 2
     }
   }
 }
