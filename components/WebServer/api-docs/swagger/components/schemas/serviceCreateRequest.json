@@ -102,6 +102,13 @@
         "type": "string",
         "nullable": true,
         "description": "The type of model used (nullable)."
+      },
+      "security_level": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 3,
+        "default": 0,
+        "description": "The security level of the service (0 = lowest, 3 = highest). Defaults to 0 if not provided."
       }
     },
     "required": ["name", "serviceName", "host", "healthcheck", "label"],
@@ -127,7 +134,8 @@
       "accoustic": "1",
       "language": "fr-FR",
       "model_quality": "1",
-      "model_type": "whisper"
+      "model_type": "whisper",
+      "security_level": 2
     }
   }
 }

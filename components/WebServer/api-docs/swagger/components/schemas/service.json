@@ -83,6 +83,13 @@
         "type": "string",
         "description": "The type of service."
       },
+      "security_level": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 3,
+        "default": 0,
+        "description": "The security level of the service (0 = lowest, 3 = highest)."
+      },
       "accoustic": {
         "type": "string",
         "nullable": true,
@@ -129,6 +136,7 @@
         "desc": "undefined"
       },
       "type": "services",
+      "security_level": 0,
       "accoustic": null,
       "model_quality": null,
       "model_type": null,

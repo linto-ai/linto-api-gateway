@@ -96,7 +96,8 @@
               "accoustic": "1",
               "language": "fr-FR",
               "model_quality": "1",
-              "model_type": "whisper"
+              "model_type": "whisper",
+              "security_level": "sensitive"
             }
           }
         }

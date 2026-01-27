@@ -4,6 +4,8 @@ const axios = require('axios')
 const Docker = require('dockerode')
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
+const SECURITY_LEVEL = require(`${process.cwd()}/lib/securityLevel.js`)
+
 module.exports = async function serviceList(scope = undefined) {
   let listServices = {
     transcription: [],
@@ -23,6 +25,7 @@ module.exports = async function serviceList(scope = undefined) {
         let serviceData = {
           name: service.name,
           serviceName: service.serviceName,
+          security_level: service.label.security_level || SECURITY_LEVEL.DEFAULT,
           desc: service.label.desc,
           scope: service.label.scope,
           image: service.image,

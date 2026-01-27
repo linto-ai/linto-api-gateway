@@ -1,6 +1,7 @@
 const debug = require('debug')('saas-api-gateway:components:service-watcher:controllers:lib:service')
 
 const { ServiceSettingsError } = require(`${process.cwd()}/components/ServiceWatcher/error/service`)
+const SECURITY_LEVEL = require(`${process.cwd()}/lib/securityLevel.js`)
 
 class Service {
   constructor(serviceName, serviceInspect) {
@@ -37,6 +38,10 @@ class Service {
     } catch (err) {
       this.label.desc = stackLabel['linto.gateway.desc']
     }
+
+    // Read and validate security_level from Docker labels
+    const securityLabel = stackLabel['linto.gateway.security_level']
+    this.label.security_level = SECURITY_LEVEL.validate(securityLabel)
 
     this.stack.image = stackLabel['com.docker.stack.image']
     this.stack.namespace = stackLabel['com.docker.stack.namespace']

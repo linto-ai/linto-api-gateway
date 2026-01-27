@@ -38,6 +38,7 @@
         {
           "name": "stt-api",
           "serviceName": "stt-api",
+          "security_level": 0,
           "online": true,
           "desc": {
             "en": "english",
@@ -86,6 +87,7 @@
           "id": 8,
           "name": "ServiceName",
           "serviceName": "ServiceName",
+          "security_level": 0,
           "host": "http://localhost:8001",
           "healthcheck": "http://localhost:8001/healthcheck",
           "label": {
