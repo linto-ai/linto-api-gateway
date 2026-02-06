@@ -1,3 +1,7 @@
+# 0.1.1
+
+- Fix slow container startup: exclude node_modules from chown in entrypoint
+
 # 0.1.0
 
 - Added an API to manually register a service
