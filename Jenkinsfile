@@ -52,11 +52,9 @@ pipeline {
                 echo 'Publishing unstable'
                 script {
                     image = docker.build(env.DOCKER_HUB_REPO)
-                    imageSlim = docker.build(env.DOCKER_HUB_REPO, "-f Dockerfile.slim .")
 
                     docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CRED) {
                         image.push('latest-unstable')
-                        imageSlim.push('latest-unstable-slim')
                     }
                 }
             }
