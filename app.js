@@ -9,6 +9,9 @@ class Ctl {
         try {
             require('./config')
 
+            const DatabaseService = require('./lib/sqlite')
+            await DatabaseService.init()
+
             this.components = {}
             process.env.COMPONENTS.split(',').reduce((prev, componentFolderName) => {
                 return prev.then(async () => { await this.use(componentFolderName) })
