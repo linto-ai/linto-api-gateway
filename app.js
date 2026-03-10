@@ -20,6 +20,9 @@ class Ctl {
                 if (this.components['ServiceWatcher'] !== undefined && this.components['WebServer'] !== undefined) {
                     await this.components['ServiceWatcher'].discovery()
                 }
+                if (this.components['ApiWatcher'] !== undefined && this.components['WebServer'] !== undefined) {
+                    await this.components['ApiWatcher'].discovery()
+                }
             })
         } catch (error) {
             console.error(error)
