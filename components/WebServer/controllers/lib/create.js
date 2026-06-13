@@ -21,6 +21,28 @@ async function create(serviceToStart) {
         console.error(err)
       })
 
+      // The WebServer applies bodyParser.json()/urlencoded() globally, which
+      // consumes the request stream. Without re-streaming, proxied requests
+      // carrying a JSON (or urlencoded) body — e.g. PUT — reach the upstream
+      // service with no body and hang. Re-write the parsed body on proxyReq.
+      // Multipart bodies are not parsed by bodyParser, so they stream intact.
+      proxy.on('proxyReq', function (proxyReq, req) {
+        if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
+          return
+        }
+        const contentType = proxyReq.getHeader('Content-Type') || ''
+        let bodyData
+        if (contentType.includes('application/json')) {
+          bodyData = JSON.stringify(req.body)
+        } else if (contentType.includes('application/x-www-form-urlencoded')) {
+          bodyData = require('querystring').stringify(req.body)
+        }
+        if (bodyData) {
+          proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+          proxyReq.write(bodyData)
+        }
+      })
+
       debug(`Create route ${endpointPath} for service ${serviceToStart.serviceName} with host ${serviceHost}`)
 
       this.express.use(endpointPath, async (req, res, next) => {
