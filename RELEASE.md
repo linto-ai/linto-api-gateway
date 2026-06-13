@@ -1,3 +1,7 @@
+# 0.1.2
+
+- Fix proxied requests with a JSON/urlencoded body hanging: the global bodyParser consumed the request stream before http-proxy forwarded it, so PUT/POST bodies never reached the upstream service. Re-stream the parsed body on proxyReq.
+
 # 0.1.1
 
 - Fix slow container startup: exclude node_modules from chown in entrypoint
