@@ -42,7 +42,8 @@ async function generateTranscriptionService(transcription) {
         accoustic: service.accoustic || "",
         language: service.language || "",
         model_quality: service.model_quality || "",
-        model_type: service.model_type || ""
+        model_type: service.model_type || "",
+        order: service.order || ""
       }
 
       for (const endpoint in service.label.endpoints) {
