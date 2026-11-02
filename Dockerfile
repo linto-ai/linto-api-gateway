@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:26.13.0-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends gosu curl \
     && rm -rf /var/lib/apt/lists/*

@@ -35,7 +35,7 @@ function setup_user() {
 
     # Adjust ownership of application directories (excluding node_modules for performance)
     echo "Adjusting ownership of application directories (excluding node_modules)"
-    find /usr/src/app -maxdepth 1 ! -name node_modules -exec chown "$USER_NAME:$GROUP_NAME" {} \;
+    find /usr/src/app -path /usr/src/app/node_modules -prune -o -exec chown "$USER_NAME:$GROUP_NAME" {} +
 
     # Get the user's home directory from the system
     USER_HOME=$(getent passwd "$USER_NAME" | cut -d: -f6)
